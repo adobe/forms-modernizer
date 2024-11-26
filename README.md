@@ -107,8 +107,8 @@ During the project build process, the `ui.apps` module will utilize either of th
 
 The current state of the tool is a work in progress. The following tasks are pending:
 
-1. Some components are in progress and are not yet supported by the tool. https://jira.corp.adobe.com/browse/FORMS-13222
-2. Visual rules will be supported by the tool, but this is currently in progress. https://jira.corp.adobe.com/browse/FORMS-13379
+1. Some components are in progress and are not yet supported by the tool.
+2. Visual rules will be supported by the tool, but this is currently in progress.
 3. It is anticipated that the user will rewrite scripts in the code editor and custom functions. Alternatively, these can be migrated using the content transfer tool, as mentioned in point 4 of this [guide](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/forms/setup-configure-migrate/migrate-to-forms-as-a-cloud-service#prerequisites).
 4. Form theme is needed to be rewritten by the user using BEM notation.
 5. The tool expects the user to create a core component form template and provide the path via the build parameter. If not, tool will re-use blank v2 template provided in core components examples package.
