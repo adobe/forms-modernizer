@@ -1,0 +1,845 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ Copyright 2024 Adobe
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:fd="http://www.adobe.com/aemfd/fd/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="sling:OrderedFolder">
+  <textInput jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <textInput jcr:primaryType="nt:unstructured"
+                 sling:resourceType="fd/af/components/guidetextbox" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <textInput
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/textinput"
+              cq:copyChildren="{Boolean}true"
+              fieldType="text-input"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              hideTitle="${./hideTitle}"
+              placeholder="${./placeholderText}"
+              required="${./mandatory}"
+              mandatoryMessage="${./mandatoryMessage}"
+              validateExpMessage="${./validateExpMessage}"
+              dataRef="${./bindRef}"
+              default="${./_value}"
+              multiLine="${./multiLine}"
+              autocomplete="${./autofillFieldKeyword}"
+              maxLength="${./maxChars}"
+              minLength="${./minLength}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              displayFormat="${./displayPictureClause}"
+              pattern="${./validatePictureClause}"
+              validationPatternType="${./validationPatternType}"
+              validatePictureClauseMessage="${./validatePictureClauseMessage}"
+              textIsRich="${./textIsRich}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              assistPriority="${./assistPriority}"
+              custom="${./custom}"
+      />
+    </replacement>
+  </textInput>
+  <header jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <header jcr:primaryType="nt:unstructured"
+              sling:resourceType="fd/af/components/guideheader" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <header
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/pageheader"
+              cq:rewriteFinal="{Boolean}true"
+              fieldType="page-header"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}">
+        <image
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="core/wcm/components/image/v3/image"
+                cq:rewriteFinal="{Boolean}true"
+                name="${./guideimage/name}"
+                jcr:title="${'./guideimage/jcr:title'}"
+                fileReference="${./guideimage/fileReference}"
+                imageFromPageImage="false"
+                altValueFromDAM="false"
+                alt="${./guideimage/altText}"/>
+        <text
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="wcm/foundation/components/text"
+                cq:rewriteFinal="{Boolean}true"
+                name="${./guidetextdraw/name}"
+                jcr:title="Text"
+                text="${'./guidetextdraw/_value'}"/>
+      </header>
+    </replacement>
+  </header>
+  <footer jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <footer jcr:primaryType="nt:unstructured"
+              sling:resourceType="fd/af/components/guidefooter" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <footer
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/footer"
+              cq:rewriteFinal="{Boolean}true"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}">
+        <text
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="core/wcm/components/text/v2/text"
+                cq:rewriteFinal="{Boolean}true"
+                name="${./guidetextdraw1/name}"
+                jcr:title="Text"
+                text="${'./guidetextdraw1/_value'}"
+                css="${'./guidetextdraw1/css'}"
+                textIsRich="true"/>
+      </footer>
+    </replacement>
+  </footer>
+  <termsAndConditions jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <termsAndConditions jcr:primaryType="nt:unstructured"
+                          sling:resourceType="fd/af/components/guidetermsandconditions" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <termsAndConditions
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/termsandconditions"
+              cq:copyChildren="{Boolean}true"
+              cq:rewriteFinal="{Boolean}true"
+              fieldType="panel"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              hideTitle="${./hideTitle}"
+              dataRef="${./bindRef}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              readOnly="{Boolean}false"
+              showApprovalOption="${./showApprovalOption}"
+              showAsPopup="${./showAsPopup}"
+              showLink="${./showLink}"
+              wrapData="{Boolean}true"
+              textIsRich="${./textIsRich}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              assistPriority="${./assistPriority}"
+              custom="${./custom}">
+        <text
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="core/fd/components/form/text/v1/text"
+                cq:rewriteFinal="{Boolean}true"
+                fieldType="plain-text"
+                name="text"
+                jcr:title="Text"
+                dataRef="${./bindRef}"
+                value="${./tncTextContent}"
+                textIsRich="true"/>
+        <approvalcheckbox
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="core/fd/components/form/checkbox/v1/checkbox"
+                cq:rewriteFinal="{Boolean}true"
+                fieldType="checkbox"
+                name="approvalcheckbox"
+                jcr:title="${./tncCheckBoxContent}"
+                checkedValue="true"
+                enabled="true"
+                required="${./required}"
+                mandatoryMessage="${./mandatoryMessage}"
+                validateExpMessage="${./validateExpMessage}"/>
+        <link
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="core/fd/components/form/toggleablelink/v1/toggleablelink"
+                cq:rewriteFinal="{Boolean}true"
+                fieldType="checkbox-group"
+                name="link"
+                jcr:title="Link Title"
+                title="${./tncCheckBoxContent}"
+                enum="${./linkText}"
+                enumNames="${./linkText}"
+                orientation="vertical"
+                readOnly="false">
+          <fd:rules
+                  jcr:primaryType="nt:unstructured"
+                  validationStatus="valid"/>
+          <fd:events
+                  jcr:primaryType="nt:unstructured"
+                  change="[if(length($field.$value) == length($field.$enum), dispatchEvent($parent.approvalcheckbox, 'custom:setProperty', {enabled : true()}), {})]"/>
+        </link>
+      </termsAndConditions>
+    </replacement>
+  </termsAndConditions>
+  <recaptcha jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <recaptcha jcr:primaryType="nt:unstructured"
+                 sling:resourceType="fd/af/components/guideCaptcha" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <recaptcha
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-core-components-it/form/recaptcha"
+              fieldType="captcha"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              hideTitle="${./hideTitle}"
+              mandatoryMessage="${./mandatoryMessage}"
+              validateExpMessage="${./validateExpMessage}"
+              rcCloudServicePath="${./rcCloudServicePath}"
+              recaptchaSize="${./rcSize}"
+      />
+    </replacement>
+  </recaptcha>
+  <numericBox jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <numericBox jcr:primaryType="nt:unstructured"
+                  sling:resourceType="fd/af/components/guidenumericbox" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <numericBox
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/numberinput"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              cq:copyChildren="{Boolean}true"
+              fieldType="number-input"
+              name="${./name}"
+              default="${./_value}"
+              dataRef="${./bindRef}"
+              type="${./dataType}"
+              hideTitle="${./hideTitle}"
+              validateExpMessage="${./validateExpMessage}"
+              visible="${./visible}"
+              textIsRich="${./textIsRich}"
+              required="${./mandatory}"
+              placeholder="${./placeholderText}"
+              mandatoryMessage="${./mandatoryMessage}"
+              excludeMaximumCheck="${./exclusiveMaximum}"
+              excludeMinimumCheck="${./excludeMinimum}"
+              exclusiveMaximum="${./maximum}"
+              exclusiveMinimum="${./minimum}"
+              maximum="${./maximum}"
+              minimum="${./minimum}"
+              enabled="${./enabled}"
+              description="${./longDescription}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              displayFormat="${./displayPictureClause}"
+              displayPatternType="${./displayPatternType}"
+              custom="${./custom}"
+              assistPriority="${./assistPriority}"
+      />
+    </replacement>
+  </numericBox>
+  <numericStepper jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <numericStepper jcr:primaryType="nt:unstructured"
+                      sling:resourceType="fd/af/components/guidenumericstepper" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <numericStepper
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/numberinput"
+              cq:copyChildren="{Boolean}true"
+              fieldType="number-input"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              hideTitle="${./hideTitle}"
+              placeholder="${./placeholderText}"
+              required="${./mandatory}"
+              mandatoryMessage="${./mandatoryMessage}"
+              validateExpMessage="${./validateExpMessage}"
+              dataRef="${./bindRef}"
+              default="${./_value}"
+              excludeMaximumCheck="${./exclusiveMaximum}"
+              excludeMinimumCheck="${./excludeMinimum}"
+              exclusiveMaximum="${./maximum}"
+              exclusiveMinimum="${./minimum}"
+              maximum="${./maximum}"
+              minimum="${./minimum}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              type="integer"
+              textIsRich="${./textIsRich}"
+              description="${./longDescription}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              displayFormat="${./displayPictureClause}"
+              displayPatternType="${./displayPatternType}"
+              custom="${./custom}"
+              assistPriority="${./assistPriority}"
+      />
+    </replacement>
+  </numericStepper>
+  <checkboxGroup jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <checkboxGroup jcr:primaryType="nt:unstructured"
+                     sling:resourceType="fd/af/components/guidecheckbox" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <checkboxGroup
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/checkboxgroup"
+              cq:copyChildren="{Boolean}true"
+              fieldType="checkbox-group"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              hideTitle="${./hideTitle}"
+              areOptionsRichText="${./richTextOptions}"
+              enum="${./enum}"
+              enumNames="${./enumNames}"
+              required="${./mandatory}"
+              mandatoryMessage="${./mandatoryMessage}"
+              validateExpMessage="${./validateExpMessage}"
+              dataRef="${./bindRef}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              default="${./default}"
+              orientation="${./alignment}"
+              textIsRich="${./textIsRich}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              assistPriority="${./assistPriority}"
+              custom="${./custom}"
+      />
+    </replacement>
+  </checkboxGroup>
+  <radiobutton jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <radiobutton
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="fd/af/components/guideradiobutton" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <radiobutton
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/radiobutton"
+              cq:copyChildren="{Boolean}true"
+              fieldType="radio-group"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              hideTitle="${./hideTitle}"
+              areOptionsRichText="${./richTextOptions}"
+              enum="${./enum}"
+              enumNames="${./enumNames}"
+              required="${./mandatory}"
+              mandatoryMessage="${./mandatoryMessage}"
+              validateExpMessage="${./validateExpMessage}"
+              dataRef="${./bindRef}"
+              default="${./_value}"
+              orientation="${./alignment}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              textIsRich="${./textIsRich}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              assistPriority="${./assistPriority}"
+              custom="${./custom}"
+      />
+    </replacement>
+  </radiobutton>
+  <text jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <text
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="fd/af/components/guidetextdraw" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <text
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/text"
+              cq:copyChildren="{Boolean}true"
+              fieldType="plain-text"
+              name="${./name}"
+              jcr:title="Text"
+              value="${./_value}"
+              dataRef="${./bindRef}"
+              visible="${./visible}"
+              textIsRich="true"
+      />
+    </replacement>
+  </text>
+  <fileAttachment jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <fileAttachment jcr:primaryType="nt:unstructured"
+                      sling:resourceType="fd/af/components/guidefileupload" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <fileAttachment
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/fileinput"
+              fieldType="file-input"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              hideTitle="${./hideTitle}"
+              dataRef="${./bindRef}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              multiSelection="${./multiSelection}"
+              buttonText="${./buttonText}"
+              maxFileSize="${./fileSizeLimit}"
+              accept="${./mimeType}"
+              dragDropText="Drag and drop to Upload one"
+              required="${./items/fileattachment/mandatory}"
+              mandatoryMessage="${./items/fileattachment/mandatoryMessage}"
+              validateExpMessage="${./items/fileattachment/validateExpMessage}"
+              textIsRich="${./textIsRich}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              assistPriority="${./assistPriority}"
+              custom="${./custom}"
+              dorExclusion="${./dorExclusion}"
+      />
+    </replacement>
+  </fileAttachment>
+  <button jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <button
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="fd/af/components/guidebutton" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <button
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/button"
+              cq:copyChildren="{Boolean}true"
+              fieldType="button"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              dataRef="${./bindRef}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              textIsRich="${./textIsRich}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              assistPriority="${./assistPriority}"
+              custom="${./custom}"
+              dorExclusion="${./dorExclusion}"
+              buttonType="${./type}"
+      />
+    </replacement>
+  </button>
+  <reset jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <reset
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="fd/af/components/actions/reset" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <reset
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/actions/reset"
+              cq:copyChildren="{Boolean}true"
+              fieldType="button"
+              buttonType="reset"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              dataRef="${./bindRef}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              textIsRich="${./textIsRich}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              assistPriority="${./assistPriority}"
+              custom="${./custom}"
+              dorExclusion="${./dorExclusion}"
+      />
+    </replacement>
+  </reset>
+  <submit jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <submit
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="fd/af/components/actions/submit" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <submit
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/actions/submit"
+              cq:copyChildren="{Boolean}true"
+              fieldType="button"
+              buttonType="submit"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              dataRef="${./bindRef}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              textIsRich="${./textIsRich}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              assistPriority="${./assistPriority}"
+              custom="${./custom}"
+              dorExclusion="${./dorExclusion}"
+      />
+    </replacement>
+  </submit>
+  <datePicker jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <datePicker jcr:primaryType="nt:unstructured"
+                  sling:resourceType="fd/af/components/guidedatepicker" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <datePicker
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/datepicker"
+              cq:copyChildren="{Boolean}true"
+              fieldType="date-input"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              hideTitle="${./hideTitle}"
+              placeholder="${./placeholderText}"
+              required="${./mandatory}"
+              mandatoryMessage="${./mandatoryMessage}"
+              validateExpMessage="${./validateExpMessage}"
+              dataRef="${./bindRef}"
+              default="${./_value}"
+              maximumDate="${./maximumDate}"
+              minimumDate="${./minimumDate}"
+              exclusiveMaximum="${./exclusiveMaximum}"
+              exclusiveMinimum="${./exclusiveMinimum}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              displayPatternType="${./displayPatternType}"
+              displayFormat="${./displayPictureClause}"
+              editPatternType="${./editPatternType}"
+              editFormat="${./editPictureClause}"
+              textIsRich="${./textIsRich}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              assistPriority="${./assistPriority}"
+              custom="${./custom}"
+      />
+    </replacement>
+  </datePicker>
+  <dateInput jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <dateInput jcr:primaryType="nt:unstructured"
+                  sling:resourceType="fd/af/components/guidedateinput" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <dateInput
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/datepicker"
+              cq:copyChildren="{Boolean}true"
+              fieldType="date-input"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              hideTitle="${./hideTitle}"
+              placeholder="${./placeholderDay} ${./placeholderMonth} ${./placeholderYear}"
+              required="${./mandatory}"
+              mandatoryMessage="${./mandatoryMessage}"
+              validateExpMessage="${./validateExpMessage}"
+              dataRef="${./bindRef}"
+              default="${./_value}"
+              maximumDate="${./maximumDate}"
+              minimumDate="${./minimumDate}"
+              exclusiveMaximum="${./exclusiveMaximum}"
+              exclusiveMinimum="${./exclusiveMinimum}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              displayPatternType="${./dateDisplayFormat}"
+              displayFormat="${./dateDisplayFormat}"
+              editPatternType="${./editPatternType}"
+              editFormat="${./editPictureClause}"
+              textIsRich="${./textIsRich}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              assistPriority="${./assistPriority}"
+              custom="${./custom}"
+      />
+    </replacement>
+  </dateInput>
+  <image jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <image
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="fd/af/components/guideimage" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <image
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/image"
+              cq:copyChildren="{Boolean}true"
+              fieldType="image"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              jcr:description="${'./jcr:description'}"
+              fileName="${./fileName}"
+              fileReference="${./fileReference}"
+              altText="${./altText}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+      />
+    </replacement>
+  </image>
+  <separator jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <separator
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="fd/af/components/guideseparator" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <separator
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="core-components-examples/components/separator"
+              cq:copyChildren="{Boolean}true"
+              name="${./name}"
+              visible="${./visible}"
+      />
+    </replacement>
+  </separator>
+  <emailinput jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <emailinput jcr:primaryType="nt:unstructured"
+                  sling:resourceType="fd/af/components/guideemail" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <emailinput
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/emailinput"
+              cq:copyChildren="{Boolean}true"
+              fieldType="email"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              hideTitle="${./hideTitle}"
+              placeholder="${./placeholderText}"
+              required="${./mandatory}"
+              mandatoryMessage="${./mandatoryMessage}"
+              validateExpMessage="${./validateExpMessage}"
+              dataRef="${./bindRef}"
+              default="${./_value}"
+              autocomplete="${./autofillFieldKeyword}"
+              maxLength="${./maxChars}"
+              minLength="${./minLength}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              pattern="${./validatePictureClause}"
+              validationPatternType="${./validationPatternType}"
+              validatePictureClauseMessage="${./validatePictureClauseMessage}"
+              textIsRich="${./textIsRich}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              assistPriority="${./assistPriority}"
+              custom="${./custom}"
+      />
+    </replacement>
+  </emailinput>
+  <dropdownList jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <dropdownList jcr:primaryType="nt:unstructured"
+                    sling:resourceType="fd/af/components/guidedropdownlist" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <dropdownList
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/dropdown"
+              cq:copyChildren="{Boolean}true"
+              fieldType="drop-down"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              hideTitle="${./hideTitle}"
+              enum="${./enum}"
+              enumNames="${./enumNames}"
+              placeholder="${./placeholderText}"
+              required="${./mandatory}"
+              mandatoryMessage="${./mandatoryMessage}"
+              validateExpMessage="${./validateExpMessage}"
+              dataRef="${./bindRef}"
+              multiSelect="${./multiSelect}"
+              default="${./_value}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              textIsRich="${./textIsRich}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              assistPriority="${./assistPriority}"
+              custom="${./custom}"
+      />
+    </replacement>
+  </dropdownList>
+  <panel jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <panel
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="fd/af/components/panel" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <panel
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/panelcontainer"
+              cq:copyChildren="{Boolean}true"
+              fieldType="panel"
+              layout="${./layout}"
+              fragmentPath="${./fragRef}"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              tooltip="${'./jcr:description'}"
+              maxOccur="${./maxOccur}"
+              minOccur="${./minOccur}"
+              dataRef="${./bindRef}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              longDescription="${./longDescription}"
+      />
+    </replacement>
+  </panel>
+  <title jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <title
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="fd/af/components/afFormTitle" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <title
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/title"
+              cq:copyChildren="{Boolean}true"
+              fieldType="plain-text"
+              name="${./name}"
+              text="${./_value}"
+              jcr:title="${./_value}"
+              type="h1"
+      />
+    </replacement>
+  </title>
+  <switch jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <switch jcr:primaryType="nt:unstructured"
+                  sling:resourceType="fd/af/components/guideswitch" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <switch
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/switch"
+              fieldType="checkbox"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              assistPriority="${./assistPriority}"
+              dataRef="${./bindRef}"
+              hideTitle="${./hideTitle}"
+              default="${./_value}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              enum="${./enum}"
+              enumNames="${./enumNames}"
+              textIsRich="${./textIsRich}"
+              custom="${./custom}"
+      />
+    </replacement>
+  </switch>
+  <telephone jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <telephone jcr:primaryType="nt:unstructured"
+              sling:resourceType="fd/af/components/guidetelephone" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <telephone
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/telephoneinput"
+              fieldType="text-input"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              assistPriority="${./assistPriority}"
+              placeholder="${./placeholderText}"
+              required="${./mandatory}"
+              mandatoryMessage="${./mandatoryMessage}"
+              autocomplete="${./autofillFieldKeyword}"
+              displayFormat="${./displayPictureClause}"
+              displayPatternType="${./displayPatternType}"
+              pattern="${./validatePictureClause}"
+              validationPatternType="${./validationPatternType}"
+              validatePictureClauseMessage="${./validatePictureClauseMessage}"
+              validateExpMessage="${./validateExpMessage}"
+              dataRef="${./bindRef}"
+              hideTitle="${./hideTitle}"
+              default="${./_value}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              textIsRich="${./textIsRich}"
+              custom="${./custom}"
+      />
+    </replacement>
+  </telephone>
+  <passwordBox jcr:primaryType="nt:unstructured">
+    <patterns jcr:primaryType="nt:unstructured">
+      <passwordBox jcr:primaryType="nt:unstructured"
+                 sling:resourceType="fd/af/components/guidepasswordbox" />
+    </patterns>
+    <replacement jcr:primaryType="nt:unstructured">
+      <passwordBox
+              jcr:primaryType="nt:unstructured"
+              sling:resourceType="forms-components-examples/components/form/textinput"
+              cq:copyChildren="{Boolean}true"
+              fieldType="text-input"
+              name="${./name}"
+              jcr:title="${'./jcr:title'}"
+              isTitleRichText="${./isTitleRichText}"
+              hideTitle="${./hideTitle}"
+              placeholder="${./placeholderText}"
+              required="${./mandatory}"
+              mandatoryMessage="${./mandatoryMessage}"
+              validateExpMessage="${./validateExpMessage}"
+              dataRef="${./bindRef}"
+              visible="${./visible}"
+              enabled="${./enabled}"
+              textIsRich="${./textIsRich}"
+              tooltip="${./shortDescription}"
+              tooltipVisible="${./shortVisible}"
+              description="${./longDescription}"
+              assistPriority="${./assistPriority}"
+              custom="${./custom}"
+      />
+    </replacement>
+  </passwordBox>
+</jcr:root>

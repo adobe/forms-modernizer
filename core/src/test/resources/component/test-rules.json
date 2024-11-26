@@ -1,0 +1,39 @@
+{
+  "jcr:primaryType": "sling:OrderedFolder",
+  "simple": {
+    "jcr:title": "Simple Rule",
+    "jcr:primaryType": "nt:unstructured",
+    "patterns": {
+      "jcr:primaryType": "nt:unstructured",
+      "simple": {
+        "jcr:primaryType": "nt:unstructured",
+        "sling:resourceType": "aem-modernize/components/simple"
+      }
+    },
+    "replacement": {
+      "jcr:primaryType": "nt:unstructured",
+      "simple": {
+        "jcr:primaryType": "nt:unstructured",
+        "sling:resourceType": "core/wcm/components/title/v2/title"
+      }
+    }
+  },
+  "copyChildren": {
+    "jcr:primaryType": "nt:unstructured",
+    "patterns": {
+      "jcr:primaryType": "nt:unstructured",
+      "copyChildren": {
+        "jcr:primaryType": "nt:unstructured",
+        "sling:resourceType": "aem-modernize/components/copyChildren"
+      }
+    },
+    "replacement": {
+      "jcr:primaryType": "nt:unstructured",
+      "copyChildren": {
+        "jcr:primaryType": "nt:unstructured",
+        "sling:resourceType": "core/wcm/components/title/v2/title",
+        "cq:copyChildren": true
+      }
+    }
+  }
+}

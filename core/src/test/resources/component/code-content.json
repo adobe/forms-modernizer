@@ -1,0 +1,63 @@
+{
+  "jcr:primaryType": "sling:Folder",
+  "forms-components-examples": {
+    "jcr:primaryType": "nt:unstructured",
+    "components": {
+      "jcr:primaryType": "nt:unstructured",
+      "form": {
+        "jcr:primaryType": "nt:unstructured",
+        "container": {
+          "jcr:primaryType": "nt:unstructured",
+          "sling:resourceSuperType": "core/fd/components/form/container/v1/container"
+        },
+        "textinput": {
+          "jcr:primaryType": "nt:unstructured",
+          "sling:resourceSuperType": "core/fd/components/form/textinput/v1/textinput"
+        },
+        "panel": {
+          "jcr:primaryType": "nt:unstructured",
+          "sling:resourceSuperType": "core/fd/components/form/panel/v1/panel"
+        }
+      }
+    }
+  },
+  "core": {
+    "jcr:primaryType": "nt:unstructured",
+    "fd": {
+      "jcr:primaryType": "nt:unstructured",
+      "components": {
+        "jcr:primaryType": "nt:unstructured",
+        "form": {
+          "jcr:primaryType": "nt:unstructured",
+          "container": {
+            "v1": {
+              "jcr:primaryType": "nt:unstructured",
+              "container": {
+                "jcr:primaryType": "nt:unstructured",
+                "sling:resourceSuperType": "wcm/foundation/components/responsivegrid"
+              }
+            }
+          },
+          "panel": {
+            "v1": {
+              "jcr:primaryType": "nt:unstructured",
+              "panel": {
+                "jcr:primaryType": "nt:unstructured",
+                "sling:resourceSuperType": "wcm/foundation/components/responsivegrid"
+              }
+            }
+          },
+          "textinput": {
+            "v1": {
+              "jcr:primaryType": "nt:unstructured",
+              "textinput": {
+                "jcr:primaryType": "nt:unstructured",
+                "sling:resourceSuperType": "core/fd/components/form/base/v1/base"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
