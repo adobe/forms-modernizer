@@ -1,7 +1,7 @@
 # AEM Forms Modernization Tool 
 
 This tool helps AEM development teams convert legacy AEM Forms to the latest version. 
-It extends the [AEM Modernize Tools suite](https://github.com/adobe/aem-modernize-tools) and is designed specifically for AEM Forms developers to upgrade their forms to AEM Forms v2.0. 
+It extends the [AEM Modernize Tools suite](https://github.com/adobe/aem-modernize-tools) and is designed specifically for AEM Forms developers to upgrade their forms to core components based AEM Forms. 
 
 Features include: 
 * Forms Conversion Tool (Legacy -> Modern/Core) 
@@ -9,7 +9,7 @@ Features include:
 ## Goal 
 
 The goal of this project is to provide a framework for converting legacy AEM Forms to the current capabilities. 
-The tool is designed to help AEM Forms developers upgrade their AEM Forms v1.0 to AEM Forms v2.0. 
+The tool is designed to help AEM Forms developers upgrade their foundation based AEM Forms to core components based AEM Forms. 
 It is flexible and customizable to fit the needs of different projects. Users should be able to run conversions with minimal necessary rewrite rules for their forms.
 
 ## Modules
@@ -47,6 +47,7 @@ Or to deploy only a single content package, run in the sub-module directory (i.e
 ## Pre-requisites
 1. Your instance should have core components installed via archetype.
 2. The tool requires the user to create a core component form template and fragment template, and provide their paths using the build parameter. Failure to do so will result in build errors.
+3. Tool is currently compatible with AEM as a cloud service. You first need to migrate your AEM Forms to AEM as a cloud service. For more information, see [Migrate to AEM Forms as a Cloud Service](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/forms/setup-configure-migrate/migrate-to-forms-as-a-cloud-service#prerequisites)
 
 
 ## How to run the tool
@@ -59,24 +60,24 @@ Or to deploy only a single content package, run in the sub-module directory (i.e
    - *Copy to Target* - Select this to convert the form by copying the form to a target location.
      - *Source Path* - Provide the source folder path containing the form.
      - *Target Path* - Provide the target folder path where the form will be copied and converted.
-4. Choose AF v1 form(s) you want to convert and click on `Schedule Job`, followed by `Convert` button.
+4. Choose foundation based AF form(s) you want to convert and click on `Schedule Job`, followed by `Convert` button.
 5. The tool will navigate you to a page that displays the conversion status. To see the most recent status of the selected form(s), you need to refresh this page.
 6. Access the target folder to view the converted form.
-7. Before accessing the v2 converted form, first open its properties, save them, and then close. This process will add any necessary additional properties to the form.
+7. Before accessing the core component converted form, first open its properties, save them, and then close. This process will add any necessary additional properties to the form.
 
 ### Points to note
 
 1. The conversion time for more intricate forms may be longer due to the number of components and their nested structure. 
 2. The conversion process for the form(s) is carried out in the background by the tool. Although the creation of the form might be visible, it's recommended not to access it until the status indicates that the conversion has either completed or failed.
-3. The tool expects the user to create a core component form and fragment template, providing the path via the build parameter. If not specified, the tool will reuse a blank v2 template provided in the core components examples package.
+3. The tool expects the user to create a core component form and fragment template, providing the path via the build parameter. If not specified, the tool will throw an error.
 4. If your forms contain fragments, you must convert them first before converting the forms. The tool does not automatically convert the fragments mentioned in the form. After converting the form, you need to open it and update the fragment path to the newly converted fragment path.
-5. Currently, the tool maps the following OOTB components to these v2 components, as they are not available in v2 components:
+5. Currently, the tool maps the following OOTB components to these core components, as they are not available in core components:
     - `af1:Numeric Stepper` -> `af2:Number Input`
     - `af1:Date Input` -> `af2:Date Picker`
     - `af1:Password Box` -> `af2:Text Input`
     - `af1:Table` -> `af2:Panel`
 
-6. The following OOTB components are not yet supported in v2, so the tool will delete them in the newly created forms. The same applies to custom components if no rules are defined for them:
+6. The following OOTB components are not yet supported in core components, so the tool will delete them in the newly created forms. The same applies to custom components if no rules are defined for them:
     - `Adobe Sign Block`
     - `Chart`
     - `File Attachment Listing`
@@ -89,6 +90,7 @@ Or to deploy only a single content package, run in the sub-module directory (i.e
     - `Toolbar`
 
 7. Deleted components are logged with relevant information. The tool will only delete nodes for which rules are not defined.
+8. Tool only converts structure of the form and its components. It does not convert scripts, custom functions, or form themes. These need to be rewritten by the user.
 
 ### How it works under the hood
 
@@ -111,7 +113,6 @@ The current state of the tool is a work in progress. The following tasks are pen
 2. Visual rules will be supported by the tool, but this is currently in progress.
 3. It is anticipated that the user will rewrite scripts in the code editor and custom functions. Alternatively, these can be migrated using the content transfer tool, as mentioned in point 4 of this [guide](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/forms/setup-configure-migrate/migrate-to-forms-as-a-cloud-service#prerequisites).
 4. Form theme is needed to be rewritten by the user using BEM notation.
-5. The tool expects the user to create a core component form template and provide the path via the build parameter. If not, tool will re-use blank v2 template provided in core components examples package.
 
 ## Testing
 
