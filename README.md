@@ -20,13 +20,17 @@ The main parts of the template are:
 * ui.apps: contains the /apps (and /etc) parts of the project, ie JS&CSS clientlibs, components, and templates
 * ui.config: contains runmode specific OSGi configs for the project
 * ui.tests: Selenium based UI tests
-* all: a single content package that embeds all of the compiled modules (bundles and content packages) including any vendor dependencies
+* all: a single content package that embeds all the compiled modules (bundles and content packages) including any vendor dependencies
 
 ## How to build
 
 To build all the modules, run the following command with Maven 3 and Java 11+ in the project root directory, specifying the project appId and template paths:
 
     mvn clean install -DappId=${appId} -DformTemplatePath=${formTemplatePath} -DfragmentTemplatePath=${fragmentTemplatePath}
+
+To build for AEM 6.5, use the `aem65` profile:
+
+    mvn clean install -Paem65 -DappId=${appId} -DformTemplatePath=${formTemplatePath} -DfragmentTemplatePath=${fragmentTemplatePath}
 
 To build all the modules and deploy the `all` package to a local instance of AEM, run in the project root directory the following command:
 

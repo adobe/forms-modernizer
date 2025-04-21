@@ -201,6 +201,43 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>aemaacs</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.adobe.aem</groupId>
+                    <artifactId>aem-sdk-api</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>aem65</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>javax.jcr</groupId>
+                    <artifactId>jcr</artifactId>
+                    <version>2.0</version>
+                </dependency>
+                <dependency>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                    <version>3.1.0</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.adobe.aem</groupId>
+                    <artifactId>uber-jar</artifactId>
+                    <version>${aem.version}</version>
+                    <classifier>apis</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
 
@@ -212,11 +249,6 @@
             <groupId>com.adobe.aem</groupId>
             <artifactId>forms-modernizer.core</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.adobe.aem</groupId>
-            <artifactId>aem-sdk-api</artifactId>
         </dependency>
 
         <!-- HTL dependencies needed for the HTL Maven Plugin source code generation -->

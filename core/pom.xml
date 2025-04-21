@@ -135,11 +135,8 @@ Import-Package: javax.annotation;version=0.0.0,*
         </dependency>
         <dependency>
             <groupId>com.adobe.aem</groupId>
-            <artifactId>aem-sdk-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.aem</groupId>
             <artifactId>aem-modernize-tools.core</artifactId>
+            <version>${aem.modernize.version}</version>
         </dependency>
         <!-- Testing -->
         <dependency>
@@ -183,4 +180,33 @@ Import-Package: javax.annotation;version=0.0.0,*
             <artifactId>io.wcm.testing.aem-mock.junit5</artifactId>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>aemaacs</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.adobe.aem</groupId>
+                    <artifactId>aem-sdk-api</artifactId>
+                    <version>${aem.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>aem65</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.adobe.aem</groupId>
+                    <artifactId>uber-jar</artifactId>
+                    <classifier>apis</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>
