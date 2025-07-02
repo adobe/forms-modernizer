@@ -15,6 +15,12 @@
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 package com.adobe.aem.core.utils;
 
+import com.adobe.granite.xss.XSSAPI;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceUtil;
+import org.apache.sling.api.resource.ValueMap;
+
 import javax.jcr.*;
 
 import java.util.HashMap;
@@ -102,9 +108,11 @@ public class AdaptiveFormUtils {
     public static void updateBindRefForRepeatableParent(Node newContainer,
                                                         String bindRef, String oldParentBindRef) throws RepositoryException {
         if (oldParentBindRef != null && bindRef.contains(oldParentBindRef)) {
-            newContainer.setProperty(BIND_REF, "#." + bindRef.substring(oldParentBindRef.length() + 1));
+            if(bindRef.length() > oldParentBindRef.length()) {
+                newContainer.setProperty(BIND_REF, "#." + bindRef.substring(oldParentBindRef.length() + 1));
+            }
         } else {
-            newContainer.setProperty(BIND_REF, bindRef.replaceFirst("/", "\\$.").replace("/", "."));
+            newContainer.setProperty(BIND_REF, bindRef.replaceFirst("/", "\\$.").replaceAll("/+", ".").replaceAll("-", ""));
         }
     }
 
@@ -113,7 +121,7 @@ public class AdaptiveFormUtils {
         if (newParentBindRef != null && newParentBindRef.startsWith("#")) {
             newContainer.setProperty(BIND_REF, newParentBindRef + "." + bindRef.substring(oldParentBindRef.length() + 1));
         } else {
-            newContainer.setProperty(BIND_REF, bindRef.replaceFirst("/", "\\$.").replace("/", "."));
+            newContainer.setProperty(BIND_REF, bindRef.replaceFirst("/", "\\$.").replaceAll("/+", ".").replaceAll("-", ""));
         }
     }
 
@@ -132,5 +140,35 @@ public class AdaptiveFormUtils {
             }
         }
         return true;
+    }
+
+    public static String generateSOMNew(Resource element) {
+        String som;
+        ValueMap valueMap = ResourceUtil.getValueMap(element);
+        Resource parentElement = element.getParent();
+        String guideNodeClass = (String) valueMap.get("guideNodeClass");
+        if(guideNodeClass == null) {
+            som = generateSOMNew(parentElement);
+        } else {
+            String name = (String) valueMap.get("name");
+            name = sanitize(name, element.getResourceResolver());
+            som = name + "[0]";
+            if ("guideContainerNode".equals(guideNodeClass)) {
+                som = "guide[0]." + som;
+            } else {
+                som = generateSOMNew(parentElement) + "." + som;
+            }
+        }
+        return som;
+    }
+
+    private static String sanitize(String input, ResourceResolver resourceResolver) {
+        XSSAPI xssapi = resourceResolver.adaptTo(XSSAPI.class);
+        return encodeForHtml(input, xssapi);
+    }
+
+    public static String encodeForHtml(String str, XSSAPI xssapi) {
+        String result = xssapi.encodeForHTML(str);
+        return result == null ? "" : result;
     }
 }

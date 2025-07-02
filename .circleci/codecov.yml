@@ -1,0 +1,23 @@
+codecov:
+  require_ci_to_pass: yes
+
+coverage:
+  status:
+    project:
+      default: off # disable the default status that measures entire project
+      unittests:
+        target: 80%
+        threshold: 10%  # allow for 10% reduction of coverage without failing
+        flags:
+          - unittests
+    patch:
+      default: off # disable the default status that measures entire project
+      unittests:
+        target: 80%
+        threshold: 10% # allow for 10% reduction of coverage without failing
+        flags:
+          - unittests
+flags:
+  unittests:
+    paths:
+      - core/

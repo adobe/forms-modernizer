@@ -1,0 +1,211 @@
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@1.0.5
+  browser-tools: circleci/browser-tools@1.4.3
+
+common:
+  restore_cache: &restore_cache
+    restore_cache:
+      keys:
+        - maven-repo-v2-{{ .Branch }}-{{ checksum "pom.xml" }}
+        - maven-repo-v2-{{ .Branch }}
+        - maven-repo-v2-
+
+  cypress_test_steps: &cypress_test_steps
+    steps:
+      - checkout
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - run:
+          command: |
+            google-chrome --version
+            chromedriver --version
+            which google-chrome
+          name: Check browser installed
+      - *restore_cache
+      - run:
+          name: Docker compose
+          command: |
+            set +e  # Disable exit on error
+            for i in $(seq 3); do
+              echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin docker2-granite-release-local.dr-uw2.adobeitc.com
+              echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin docker-adobe-cif-release.dr-uw2.adobeitc.com
+              docker-compose -f .circleci/docker-compose.yml down -v
+              docker-compose -f .circleci/docker-compose.yml up -d && break
+              sleep 10  # Add a delay between retries
+            done
+            set -e  # Enable exit on error
+      - attach_workspace:
+          at: /home/circleci/build
+      - run:
+          name: Configure GIT
+          command: |
+            git config user.email "ci-build@aemforms"
+            git config user.name "ci-build"
+      - add_ssh_keys:
+          fingerprints:
+            - "cc:0f:09:fc:97:72:c5:12:2e:fb:ea:a0:a2:39:3c:64"
+      - run:
+          name: Install Chrome Launcher
+          command: npm install chrome-launcher
+      - run:
+          name: Install lighthouse
+          command: npm install lighthouse
+      - run:
+          name: Install Web Driver
+          command: npm install selenium-webdriver
+      - run:
+          name: Install AXE Core/Webdriver
+          command: npm install @axe-core/webdriverjs
+      - run:
+          name: Install AXE HTML Reporter
+          command: npm install axe-html-reporter
+      - run: docker ps -a
+      - run:
+          name: UI tests
+          # Supports 'Re-run failed tests only'. See this for more info: https://circleci.com/docs/rerun-failed-tests-only/
+          command: |
+            cd ui.tests/test-module
+            TESTFILES=$(circleci tests glob "specs/**/*.cy.js")
+            cd ../../
+            echo "false" >> TEST_EXECUTION_STATUS.txt
+            echo $TESTFILES | circleci tests run --command="xargs node .circleci/ci/it-tests.js" --verbose --split-by=timings
+      - store_test_results:
+          path: ui.tests/test-module/test_results
+      - run:
+          name: Calculate lighthouse Scores
+          command: |
+            test_execution_status=$(cat TEST_EXECUTION_STATUS.txt)
+            if [[ $test_execution_status == "true" ]]; then
+              node .circleci/ci/lighthouse.js
+            else
+              echo "Skipping Lighthouse Scores calculation..."
+            fi
+      - run:
+          name: Check Accessibility
+          command: |
+            test_execution_status=$(cat TEST_EXECUTION_STATUS.txt)
+            if [[ $test_execution_status == "true" ]]; then
+              node .circleci/ci/accessibility-axe.js
+            else
+              echo "Skipping Accessibility check..."
+            fi
+      - run:
+          name: Stop CQ
+          command: |
+            test_execution_status=$(cat TEST_EXECUTION_STATUS.txt)
+            if [[ $test_execution_status == "true" ]]; then
+              node .circleci/ci/stop-cq.js
+            else
+              echo "Skipping stop cq ..."
+            fi
+      - run:
+          name: Cleanup
+          command: |
+            rm -rf TEST_EXECUTION_STATUS.txt
+      # Save test results as artifacts
+      - store_artifacts:
+          path: ui.tests/test-module/target
+      - run:
+          name: Move .cy.json files to target directory of cypress
+          command: |
+            mkdir -p ui.tests/test-module/target/cy-json
+            find ui.tests/test-module -name "*.cy.json" -exec mv {} ui.tests/test-module/target/cy-json/ \;
+      - store_artifacts:
+          path: ui.tests/test-module/target/cy-json
+      # Save AEM logs as artifacts
+      - store_artifacts:
+          path: logs
+      - store_artifacts:
+          path: artifacts
+
+  docker_auth: &docker_auth
+    auth:
+      username: $DOCKER_USER
+      password: $DOCKER_PASS
+
+commands:
+  setup-maven:
+    description: "Setup Maven environment variables"
+    steps:
+      - run:
+          name: "Setup Maven environment"
+          command: |
+            echo 'export MAVEN_OPTS="-Xmx2048m -XX:MaxPermSize=512m"' >> $BASH_ENV
+            echo 'export JAVA_OPTS="-Xmx2048m -XX:MaxPermSize=512m"' >> $BASH_ENV
+
+executors:
+  forms_executor:
+    docker:
+      - image: cimg/openjdk:11.0.16-browsers
+  test_executor_cloudready:
+    machine:
+      image: ubuntu-2204:2024.01.1
+      docker_layer_caching: true
+
+jobs:
+  build-and-test:
+    executor: forms_executor
+    working_directory: /home/circleci/build
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - maven-repo-v1-{{ checksum "pom.xml" }}
+            - maven-repo-v1-
+      - run:
+          name: Update permissions
+          command: sudo chown -R circleci /usr/local/lib/node_modules
+      - run:
+          name: Build
+          command: node .circleci/ci/build.js
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-repo-v2-{{ .Branch }}-{{ checksum "pom.xml" }}
+      - persist_to_workspace:
+          root: /home/circleci/build
+          paths:
+            - core/target
+            - ui.apps/target/*.zip
+            - ui.config/target/*.zip
+      - store_test_results:
+          path: core/target/surefire-reports
+      - store_artifacts:
+          path: all/target
+      - codecov/upload:
+          conf: .circleci/codecov.yml
+          flags: unittests
+
+  cypress-chrome-cloudready-with-latest-addon:
+    executor: test_executor_cloudready
+    environment:
+      AEM: addon-latest
+      TYPE: cypress
+      BROWSER: chrome
+      PRERELEASE: 'true'
+      FT: 'true'
+    resource_class: xlarge
+    working_directory: /home/circleci/build
+    parallelism: 8
+    <<: *cypress_test_steps
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build-and-test:
+          filters:
+            branches:
+              only:
+                - main
+                - dev
+      - cypress-chrome-cloudready-with-latest-addon:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                - main
+                - develop 

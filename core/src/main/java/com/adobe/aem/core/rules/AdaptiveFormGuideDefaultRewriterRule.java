@@ -16,6 +16,8 @@
 package com.adobe.aem.core.rules;
 
 import com.adobe.aem.modernize.component.ComponentRewriteRule;
+import com.day.cq.commons.jcr.JcrUtil;
+import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
@@ -33,7 +35,7 @@ import javax.jcr.*;
 import java.util.*;
 
 import static com.adobe.aem.core.utils.AdaptiveFormConstants.*;
-import static com.adobe.aem.core.utils.AdaptiveFormUtils.deleteFormNodes;
+import static com.adobe.aem.core.utils.AdaptiveFormUtils.*;
 import static org.apache.sling.jcr.resource.api.JcrResourceConstants.AUTHENTICATION_INFO_SESSION;
 import static org.apache.sling.jcr.resource.api.JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY;
 
@@ -132,8 +134,10 @@ public class AdaptiveFormGuideDefaultRewriterRule extends AbstractAdaptiveFormCo
                 logger.info("!----------------------------------------------------------------!");
                 logger.info("Cannot find rule for component: {} with path: {}, it will be deleted", root.getProperty(SLING_RESOURCE_TYPE_PROPERTY), root.getPath());
                 logger.info("!----------------------------------------------------------------!");
-                root.getProperty(SLING_RESOURCE_TYPE_PROPERTY).remove();
-                deleteFormNodes(root, session);
+
+                // modify some properties of the component for conversion instead of deletion
+                root.setProperty("oldCustomResourceType", root.getProperty(SLING_RESOURCE_TYPE_PROPERTY).getValue().getString());
+                root.setProperty(SLING_RESOURCE_TYPE_PROPERTY, COMPONENT_PATH_PREFIX + "text");
             }
         } catch (RepositoryException e) {
             logger.error("Unable to get a ResourceResolver using Node Session info.", e);

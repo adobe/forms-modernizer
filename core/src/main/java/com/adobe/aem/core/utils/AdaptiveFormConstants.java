@@ -87,6 +87,10 @@ public class AdaptiveFormConstants {
     public static final String GUIDE_NODE_CLASS = "guideNodeClass";
     public static final String GUIDE_CSS = "guideCss";
     public static final String VIEW = "view";
+    public static final String SCHEMA_TYPE = "schemaType";
+    public static final String XSD_REF = "xsdRef";
+    public static final String XSD_ROOT_ELEMENT = "xsdRootElement";
+    public static final String NONE = "none";
     public static final String HIDE_TITLE = "hideTitle";
     public static final String FD_VIEW = "fd:view";
     public static final String FIELD_TYPE_FORM = "form";
@@ -149,6 +153,6 @@ public class AdaptiveFormConstants {
     public static final String CORE_SUBMIT_ACTION_RESOURCE_TYPE = COMPONENT_PATH_PREFIX + "actions/submit";
     public static final String CORE_RESET_ACTION_RESOURCE_TYPE = COMPONENT_PATH_PREFIX + "actions/reset";
     public final static List<String> GRID_LAYOUTS = Arrays.asList("fd/af/layouts/gridFluidLayout", "fd/af/layouts/gridFluidLayout2", "fd/af/layouts/defaultGuideLayout");
-    public final static List<String> PANEL_NODES_TO_IGNORE = Arrays.asList("layout", "items");
+    public final static List<String> PANEL_NODES_TO_IGNORE = Arrays.asList("layout", "items", "toolbar");
     public final static List<String> CONTAINER_NODES_TO_IGNORE = Arrays.asList("parsys1", "parsys2", "layout", "rootPanel");
 }

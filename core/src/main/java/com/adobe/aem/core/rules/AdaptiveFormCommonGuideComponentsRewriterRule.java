@@ -77,6 +77,13 @@ public class AdaptiveFormCommonGuideComponentsRewriterRule extends AbstractAdapt
                 if (root.hasNode(CQ_RESPONSIVE) && !container.hasProperty(LAYOUT_PROPERTY)) {
                     container.setProperty(LAYOUT_PROPERTY, RESPONSIVE_GRID);
                 }
+                container.setProperty("originalPath", root.getPath());
+                Resource containerResource = rr.getResource(root.getPath());
+                try {
+                    container.setProperty("somExpression", AdaptiveFormUtils.generateSOMNew(containerResource));
+                } catch (Exception e) {
+                    logger.error("Error generating SOM for container resource: {}", containerResource.getPath(), e);
+                }
 
                 String bindRef = fetchBindRef(root);
                 if (bindRef != null) {
