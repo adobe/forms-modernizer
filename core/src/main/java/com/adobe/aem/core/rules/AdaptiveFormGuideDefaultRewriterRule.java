@@ -137,7 +137,7 @@ public class AdaptiveFormGuideDefaultRewriterRule extends AbstractAdaptiveFormCo
 
                 // modify some properties of the component for conversion instead of deletion
                 root.setProperty("oldCustomResourceType", root.getProperty(SLING_RESOURCE_TYPE_PROPERTY).getValue().getString());
-                root.setProperty(SLING_RESOURCE_TYPE_PROPERTY, COMPONENT_PATH_PREFIX + "text");
+                root.setProperty(SLING_RESOURCE_TYPE_PROPERTY, GUIDE_TEXT_DRAW);
             }
         } catch (RepositoryException e) {
             logger.error("Unable to get a ResourceResolver using Node Session info.", e);

@@ -56,6 +56,8 @@
               description="${./longDescription}"
               assistPriority="${./assistPriority}"
               custom="${./custom}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </textInput>
@@ -71,7 +73,9 @@
               cq:rewriteFinal="{Boolean}true"
               fieldType="page-header"
               name="${./name}"
-              jcr:title="${'./jcr:title'}">
+              jcr:title="${'./jcr:title'}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}">
         <image
                 jcr:primaryType="nt:unstructured"
                 sling:resourceType="appId/components/image"
@@ -103,7 +107,9 @@
               sling:resourceType="appId/components/adaptiveForm/footer"
               cq:rewriteFinal="{Boolean}true"
               name="${./name}"
-              jcr:title="${'./jcr:title'}">
+              jcr:title="${'./jcr:title'}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}">
         <text
                 jcr:primaryType="nt:unstructured"
                 sling:resourceType="wcm/foundation/components/text"
@@ -145,7 +151,9 @@
               tooltipVisible="${./shortVisible}"
               description="${./longDescription}"
               assistPriority="${./assistPriority}"
-              custom="${./custom}">
+              custom="${./custom}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}">
         <text
                 jcr:primaryType="nt:unstructured"
                 sling:resourceType="appId/components/adaptiveForm/text"
@@ -208,6 +216,8 @@
               validateExpMessage="${./validateExpMessage}"
               rcCloudServicePath="${./rcCloudServicePath}"
               recaptchaSize="${./rcSize}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </recaptcha>
@@ -249,6 +259,8 @@
               displayPatternType="${./displayPatternType}"
               custom="${./custom}"
               assistPriority="${./assistPriority}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </numericBox>
@@ -290,6 +302,8 @@
               displayPatternType="${./displayPatternType}"
               custom="${./custom}"
               assistPriority="${./assistPriority}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </numericStepper>
@@ -325,6 +339,8 @@
               description="${./longDescription}"
               assistPriority="${./assistPriority}"
               custom="${./custom}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </checkboxGroup>
@@ -361,6 +377,8 @@
               description="${./longDescription}"
               assistPriority="${./assistPriority}"
               custom="${./custom}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </radiobutton>
@@ -382,6 +400,9 @@
               dataRef="${./bindRef}"
               visible="${./visible}"
               textIsRich="true"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
+              oldCustomResourceType="${./oldCustomResourceType}"
       />
     </replacement>
   </text>
@@ -417,6 +438,8 @@
               assistPriority="${./assistPriority}"
               custom="${./custom}"
               dorExclusion="${./dorExclusion}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </fileAttachment>
@@ -446,6 +469,8 @@
               custom="${./custom}"
               dorExclusion="${./dorExclusion}"
               buttonType="${./type}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </button>
@@ -475,6 +500,8 @@
               assistPriority="${./assistPriority}"
               custom="${./custom}"
               dorExclusion="${./dorExclusion}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </reset>
@@ -504,6 +531,8 @@
               assistPriority="${./assistPriority}"
               custom="${./custom}"
               dorExclusion="${./dorExclusion}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </submit>
@@ -544,6 +573,8 @@
               description="${./longDescription}"
               assistPriority="${./assistPriority}"
               custom="${./custom}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </datePicker>
@@ -584,6 +615,8 @@
               description="${./longDescription}"
               assistPriority="${./assistPriority}"
               custom="${./custom}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </dateInput>
@@ -607,6 +640,8 @@
               altText="${./altText}"
               visible="${./visible}"
               enabled="${./enabled}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </image>
@@ -623,6 +658,8 @@
               cq:copyChildren="{Boolean}true"
               name="${./name}"
               visible="${./visible}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </separator>
@@ -661,6 +698,8 @@
               description="${./longDescription}"
               assistPriority="${./assistPriority}"
               custom="${./custom}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </emailinput>
@@ -696,6 +735,8 @@
               description="${./longDescription}"
               assistPriority="${./assistPriority}"
               custom="${./custom}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </dropdownList>
@@ -722,6 +763,8 @@
               visible="${./visible}"
               enabled="${./enabled}"
               longDescription="${./longDescription}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </panel>
@@ -741,6 +784,8 @@
               text="${./_value}"
               jcr:title="${./_value}"
               type="h1"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </title>
@@ -770,6 +815,8 @@
               enumNames="${./enumNames}"
               textIsRich="${./textIsRich}"
               custom="${./custom}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </switch>
@@ -807,6 +854,8 @@
               enabled="${./enabled}"
               textIsRich="${./textIsRich}"
               custom="${./custom}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </telephone>
@@ -838,6 +887,8 @@
               description="${./longDescription}"
               assistPriority="${./assistPriority}"
               custom="${./custom}"
+              somExpression="${./somExpression}"
+              originalPath="${./originalPath}"
       />
     </replacement>
   </passwordBox>

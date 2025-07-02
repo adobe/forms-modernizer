@@ -32,6 +32,7 @@ import java.util.*;
 
 import static com.adobe.aem.core.utils.AdaptiveFormConstants.*;
 import static com.adobe.aem.core.utils.AdaptiveFormUtils.createNodeAndCopyProperties;
+import static com.adobe.aem.core.utils.AdaptiveFormUtils.createUEFormNodes;
 import static org.apache.jackrabbit.JcrConstants.JCR_CONTENT;
 import static org.apache.sling.jcr.resource.api.JcrResourceConstants.AUTHENTICATION_INFO_SESSION;
 import static org.apache.sling.jcr.resource.api.JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY;
@@ -66,7 +67,8 @@ public class AdaptiveFormGuideContainerRewriterRule extends AbstractAdaptiveForm
 
             // only create and copy properties of container node and return
             String name = JcrUtil.createValidChildName(parent, TEMP_CONTAINER_NODE);
-            Node container = createNodeAndCopyProperties(root, parent, name);
+            Node section = createUEFormNodes(parent);
+            Node container = createNodeAndCopyProperties(root, section, name);
             container.setProperty(FD_VERSION, CORE_COMPONENT_VERSION);
             container.setProperty(FIELD_TYPE, FIELD_TYPE_FORM);
             container.setProperty(THEME_REF, CANVAS_THEME_PATH);

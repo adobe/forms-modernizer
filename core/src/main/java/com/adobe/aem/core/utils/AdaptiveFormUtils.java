@@ -48,6 +48,15 @@ public class AdaptiveFormUtils {
         return newNode;
     }
 
+    public static Node createUEFormNodes(Node parent) throws RepositoryException {
+        Node root = parent.addNode("root", NT_UNSTRUCTURED);
+        root.setProperty(SLING_RESOURCE_TYPE_PROPERTY, "core/" + APP_ID + "/components/root/v1/root");
+
+        Node section = root.addNode("section", NT_UNSTRUCTURED);
+        section.setProperty(SLING_RESOURCE_TYPE_PROPERTY, "core/" + APP_ID + "/components/section/v1/section");
+        return section;
+    }
+
     public static boolean isRepeatablePanel(Node panelNode) throws RepositoryException {
         return (panelNode.hasProperty(MIN_OCCUR) || panelNode.hasProperty(MAX_OCCUR));
     }

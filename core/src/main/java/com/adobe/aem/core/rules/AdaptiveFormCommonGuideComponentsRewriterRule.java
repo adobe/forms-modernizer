@@ -68,6 +68,14 @@ public class AdaptiveFormCommonGuideComponentsRewriterRule extends AbstractAdapt
                 String newContainerPath = grandParent.getProperty(V2_COMPONENT_TEMP_PATH).getValue().getString();
                 Node container = session.getNode(newContainerPath);
 
+                root.setProperty("originalPath", root.getPath());
+                Resource rootResource = rr.getResource(root.getPath());
+                try {
+                    root.setProperty("somExpression", AdaptiveFormUtils.generateSOMNew(rootResource));
+                } catch (Exception e) {
+                    logger.error("Error generating SOM for container resource: {}", root.getPath(), e);
+                }
+
                 // modify some properties of the component for conversion
                 modifyComponentPropertiesForConversion(root, rr);
 
@@ -76,13 +84,6 @@ public class AdaptiveFormCommonGuideComponentsRewriterRule extends AbstractAdapt
                 // if itemsChild has cq:responsive node then add layout=responsive to parent panel
                 if (root.hasNode(CQ_RESPONSIVE) && !container.hasProperty(LAYOUT_PROPERTY)) {
                     container.setProperty(LAYOUT_PROPERTY, RESPONSIVE_GRID);
-                }
-                container.setProperty("originalPath", root.getPath());
-                Resource containerResource = rr.getResource(root.getPath());
-                try {
-                    container.setProperty("somExpression", AdaptiveFormUtils.generateSOMNew(containerResource));
-                } catch (Exception e) {
-                    logger.error("Error generating SOM for container resource: {}", containerResource.getPath(), e);
                 }
 
                 String bindRef = fetchBindRef(root);
