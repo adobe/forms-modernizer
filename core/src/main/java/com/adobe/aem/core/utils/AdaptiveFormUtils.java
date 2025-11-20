@@ -102,9 +102,11 @@ public class AdaptiveFormUtils {
     public static void updateBindRefForRepeatableParent(Node newContainer,
                                                         String bindRef, String oldParentBindRef) throws RepositoryException {
         if (oldParentBindRef != null && bindRef.contains(oldParentBindRef)) {
-            newContainer.setProperty(BIND_REF, "#." + bindRef.substring(oldParentBindRef.length() + 1));
+            if(bindRef.length() > oldParentBindRef.length()) {
+                newContainer.setProperty(BIND_REF, "#." + bindRef.substring(oldParentBindRef.length() + 1));
+            }
         } else {
-            newContainer.setProperty(BIND_REF, bindRef.replaceFirst("/", "\\$.").replace("/", "."));
+            newContainer.setProperty(BIND_REF, bindRef.replaceFirst("/", "\\$.").replaceAll("/+", ".").replaceAll("-", ""));
         }
     }
 
@@ -113,7 +115,7 @@ public class AdaptiveFormUtils {
         if (newParentBindRef != null && newParentBindRef.startsWith("#")) {
             newContainer.setProperty(BIND_REF, newParentBindRef + "." + bindRef.substring(oldParentBindRef.length() + 1));
         } else {
-            newContainer.setProperty(BIND_REF, bindRef.replaceFirst("/", "\\$.").replace("/", "."));
+            newContainer.setProperty(BIND_REF, bindRef.replaceFirst("/", "\\$.").replaceAll("/+", ".").replaceAll("-", ""));
         }
     }
 

@@ -236,6 +236,7 @@
                                 <embedded>
                                     <groupId>com.adobe.aem</groupId>
                                     <artifactId>aem-modernize-tools.ui.config</artifactId>
+                                    <classifier>aem65</classifier>
                                     <type>zip</type>
                                     <target>/apps/forms-modernizer-packages/application/install</target>
                                 </embedded>
