@@ -85,12 +85,13 @@ public class AdaptiveFormGuideTableRewriterRule extends AbstractAdaptiveFormComp
                 Node tableRowComponent = tableRowIterator.nextNode();
                 Node tableRowContainer = getTableRowContainer(tableRowComponent, tableContainer);
                 Node rowItemNode = tableRowComponent.hasNode(ITEMS) ? tableRowComponent.getNode(ITEMS) : null;
-                int rowItemSize = (int) rowItemNode.getNodes().getSize();
-                int width = 12 / rowItemSize;
-                if(width == 0) {
-                    width = 1;
-                }
+                
                 if (rowItemNode != null) {
+                    int rowItemSize = (int) rowItemNode.getNodes().getSize();
+                    int width = 12 / rowItemSize;
+                    if(width == 0) {
+                        width = 1;
+                    }
                     NodeIterator rowItems = rowItemNode.getNodes();
                     while (rowItems.hasNext()) {
                         Node rowNode = rowItems.nextNode();
