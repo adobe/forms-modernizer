@@ -96,8 +96,8 @@
                                     <version>[3.3.9,)</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <message>Maven must be executed with a Java 11 JRE or higher.</message>
-                                    <version>11.0.0</version>
+                                    <message>Maven must be executed with a Java 8 JRE or higher.</message>
+                                    <version>1.8.0</version>
                                 </requireJavaVersion>
                                 <requireProperty>
                                     <property>appId</property>
@@ -433,6 +433,30 @@ Bundle-DocURL:
             <properties>
                 <aem.version>2025.3.20133.20250325T063357Z-250300</aem.version>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-jdk11-for-aemaacs</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireJavaVersion>
+                                            <message>The aemaacs profile requires Java 11 or higher.</message>
+                                            <version>11.0.0</version>
+                                        </requireJavaVersion>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
             <dependencyManagement>
                 <dependencies>
                     <dependency>
