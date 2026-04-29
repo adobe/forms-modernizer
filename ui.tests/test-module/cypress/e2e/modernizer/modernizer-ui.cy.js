@@ -10,24 +10,25 @@ describe('Forms Modernizer – Tool UI', () => {
         cy.loginToAEM()
     })
 
-    it('modernizer tool page loads without error', () => {
-        cy.visit(aem.paths.modernizerTool, { failOnStatusCode: false })
-        // The page should load (200 or redirect to login if session expired)
-        cy.url().should('not.include', 'login')
+    it('modernizer tool page returns 200', () => {
+        cy.aemRequest({
+            url: aem.paths.modernizerTool,
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status, `Tool page at ${aem.paths.modernizerTool} should return 200`).to.eq(200)
+        })
     })
 
-    it('modernizer tool page contains the expected heading', () => {
+    it('modernizer tool page loads in the browser without redirect to login', () => {
         cy.visit(aem.paths.modernizerTool)
-        // The AEM modernize tool page title should be present in the DOM
-        cy.get('title').should('exist')
+        cy.url().should('not.include', 'login')
         cy.get('body').should('be.visible')
     })
 
-    it('modernizer wizard can be initiated', () => {
+    it('modernizer wizard action button is present', () => {
         cy.visit(aem.paths.modernizerTool)
-        // Verify the primary action button (Start wizard / Convert) is present
-        cy.get('[data-foundation-wizard-control-next], .cq-wizard-next, [type="submit"]')
-            .first()
+        // Scope to foundation wizard controls only — avoids matching generic submit buttons
+        cy.get('[data-foundation-wizard-control-next], .cq-wizard-next')
             .should('exist')
     })
 })

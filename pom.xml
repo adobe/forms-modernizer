@@ -692,8 +692,79 @@ Bundle-DocURL:
                 </pluginManagement>
             </build>
         </profile>
+        <!-- Release profile: GPG signing, sources jar, javadoc jar for Maven Central -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- Non-interactive signing (required in CI) -->
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.6.3</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
+    <!-- ====================================================================== -->
+    <!-- D I S T R I B U T I O N   M A N A G E M E N T                        -->
+    <!-- ====================================================================== -->
+    <!--
+        Uses Sonatype Central Portal (new publishing API, not legacy OSSRH).
+        Credentials are supplied via settings.xml server id="central".
+    -->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>central</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>central</id>
+            <url>https://central.sonatype.com/api/v1/publisher/upload</url>
+        </repository>
+    </distributionManagement>
 
     <!-- ====================================================================== -->
     <!-- D E P E N D E N C I E S -->

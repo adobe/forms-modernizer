@@ -1,5 +1,6 @@
 const { defineConfig } = require('cypress')
 const { installLogsPrinter } = require('cypress-terminal-report/src/installLogsPrinter')
+const fs = require('fs')
 
 module.exports = defineConfig({
   e2e: {
@@ -18,8 +19,8 @@ module.exports = defineConfig({
       openMode: 0
     },
     video: true,
-    videoUploadOnPasses: false,
-    reporter: 'junit',
+    // videoUploadOnPasses was removed in Cypress 13; delete passing-test recordings via after:spec below
+    reporters: ['junit', 'spec'],
     reporterOptions: {
       mochaFile: 'target/cypress-results/results-[hash].xml',
       toConsole: true
@@ -28,6 +29,13 @@ module.exports = defineConfig({
       installLogsPrinter(on, {
         printLogsToConsole: 'onFail'
       })
+
+      on('after:spec', (_spec, results) => {
+        if (results && results.video && results.stats.failures === 0) {
+          fs.unlinkSync(results.video)
+        }
+      })
+
       return config
     }
   }

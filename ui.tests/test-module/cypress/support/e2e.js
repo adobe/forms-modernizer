@@ -14,4 +14,5 @@ Cypress.on('uncaught:exception', (err) => {
     if (ignored.some((msg) => err.message.includes(msg))) {
         return false
     }
+    return true // let Cypress fail the test for all other uncaught exceptions
 })
