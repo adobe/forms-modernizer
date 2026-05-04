@@ -29,8 +29,10 @@ setup and trimmed down to fit this project's actual structure.
 
 * **build-java-11** — Builds the reactor on JDK 11 with the default `aemaacs`
   profile and runs all unit tests.
-* **build-aem65** — Builds with the `aem65` (on-prem) profile on JDK 8 to keep
-  AEM 6.5 consumers unbroken.
+* **build-aem65** — Builds with the `aem65` (on-prem) profile on JDK 11 to
+  validate API compatibility with AEM 6.5. JDK 8 is **not supported**; the
+  `aem65` profile is a build-validation gate only and does not produce a
+  separately released artifact.
 * **coverage** — Builds the `core` bundle and uploads JaCoCo coverage to
   Codecov. Requires the `jacoco-maven-plugin` — see [Enabling code
   coverage](#enabling-code-coverage). Exits early without failing if the
@@ -59,13 +61,18 @@ variables**:
 
 ## Java version matrix
 
-| Job            | JDK  | Maven profile |
-| -------------- | ---- | ------------- |
-| `build-java-11`| 11   | `aemaacs`     |
-| `build-aem65`  | 8    | `aem65`       |
-| `coverage`     | 11   | `aemaacs`     |
-| `cypress-chrome`| 11  | _(none)_      |
-| `release`      | 11   | `aemaacs`     |
+| Job             | JDK | Maven profile | Notes                                  |
+| --------------- | --- | ------------- | -------------------------------------- |
+| `build-java-11` | 11  | `aemaacs`     |                                        |
+| `build-aem65`   | 11  | `aem65`       | Build-validation only; no JDK 8 support |
+| `coverage`      | 11  | `aemaacs`     |                                        |
+| `cypress-chrome`| 11  | _(none)_      | Requires live AEM instance             |
+| `release`       | 11  | `aemaacs`     |                                        |
+
+> **JDK 8 / AEM 6.5 release support**: The `aem65` profile validates that the
+> code compiles against the AEM 6.5 API. It does **not** produce or publish a
+> JDK 8-compatible artifact. JDK 8 is not a supported build target for this
+> project.
 
 The root POM enforcer requires Java ≥ 1.8 globally. An additional
 `enforce-jdk11-for-aemaacs` execution inside the `aemaacs` profile raises the

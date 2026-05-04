@@ -109,11 +109,6 @@ executors:
     resource_class: medium
     working_directory: /home/circleci/build
 
-  jdk8:
-    docker:
-      - image: cimg/openjdk:8.0.312
-    resource_class: medium
-    working_directory: /home/circleci/build
 
 # ----------------------------------------------------------------------------
 # Jobs
@@ -127,9 +122,9 @@ jobs:
       BUILD_PROFILE: aemaacs
     steps: *maven_build_steps
 
-  # AEM 6.5 on-prem profile – Java 8
+  # AEM 6.5 on-prem profile – Java 11 (JDK 8 not supported; aem65 is a build-validation profile only)
   build-aem65:
-    executor: jdk8
+    executor: jdk11
     environment:
       MAVEN_OPTS: "-Xmx2g -XX:+UseG1GC"
       BUILD_PROFILE: aem65
