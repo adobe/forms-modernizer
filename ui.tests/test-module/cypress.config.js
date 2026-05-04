@@ -20,10 +20,12 @@ module.exports = defineConfig({
     },
     video: true,
     // videoUploadOnPasses was removed in Cypress 13; delete passing-test recordings via after:spec below
-    reporters: ['junit', 'spec'],
+    reporter: 'cypress-multi-reporters',
     reporterOptions: {
-      mochaFile: 'target/cypress-results/results-[hash].xml',
-      toConsole: true
+      reporterEnabled: 'mocha-junit-reporter, spec',
+      mochaJunitReporterReporterOptions: {
+        mochaFile: 'target/cypress-results/results-[hash].xml'
+      }
     },
     setupNodeEvents(on, config) {
       installLogsPrinter(on, {

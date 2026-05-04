@@ -34,6 +34,15 @@
 
 version: 2.1
 
+# Set run_ui_tests=true when triggering a pipeline against a live AEM instance
+# (via CircleCI API or the "Trigger Pipeline" button in the UI).
+# It is false by default so cypress-chrome never runs on routine PRs where no
+# AEM author is available.
+parameters:
+  run_ui_tests:
+    type: boolean
+    default: false
+
 orbs:
   codecov: codecov/codecov@4
   browser-tools: circleci/browser-tools@1.4.6
@@ -214,7 +223,7 @@ jobs:
             fi
             echo "$GPG_PRIVATE_KEY" | base64 --decode | gpg --batch --import
       - run:
-          name: Build release artifacts
+          name: Build & test release artifacts
           command: |
             : "${APP_ID:=forms-modernizer}"
             : "${FORM_TEMPLATE_PATH:=/conf/forms-modernizer/settings/wcm/templates/blank-form-template/structure}"
@@ -225,7 +234,6 @@ jobs:
               -DappId="${APP_ID}" \
               -DformTemplatePath="${FORM_TEMPLATE_PATH}" \
               -DfragmentTemplatePath="${FRAGMENT_TEMPLATE_PATH}" \
-              -DskipTests \
               clean package
       - run:
           name: Create GitHub release & upload artifacts
@@ -288,9 +296,14 @@ workflows:
       - coverage:
           requires:
             - build-java-11
-      - cypress-chrome:
-          requires:
-            - build-java-11
+
+  # Runs only when triggered with run_ui_tests=true (requires a live AEM author).
+  # Trigger via: CircleCI UI → "Trigger Pipeline" → add parameter run_ui_tests=true,
+  # or via the CircleCI API with {"parameters": {"run_ui_tests": true}}.
+  ui-tests:
+    when: << pipeline.parameters.run_ui_tests >>
+    jobs:
+      - cypress-chrome
 
   # Runs only when a release tag (forms-modernizer-X.Y.Z) is pushed from main.
   release:
