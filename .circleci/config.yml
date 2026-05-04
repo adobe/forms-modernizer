@@ -34,12 +34,12 @@
 
 version: 2.1
 
-# Set run_ui_tests=true when triggering a pipeline against a live AEM instance
-# (via CircleCI API or the "Trigger Pipeline" button in the UI).
-# It is false by default so cypress-chrome never runs on routine PRs where no
-# AEM author is available.
+# cypress-chrome runs on every push/PR by default.
+# Set skip_ui_tests=true to bypass it (e.g. debugging a PR unrelated to E2E).
+# When no live AEM instance is configured (AEM_AUTHOR_URL still points to
+# localhost), the job detects this and exits cleanly rather than timing out.
 parameters:
-  run_ui_tests:
+  skip_ui_tests:
     type: boolean
     default: false
 
@@ -174,6 +174,15 @@ jobs:
       - checkout
       - *restore_maven_cache
       - run:
+          name: Check AEM author reachability
+          command: |
+            : "${AEM_AUTHOR_URL:=http://localhost:4502}"
+            if [ "$AEM_AUTHOR_URL" = "http://localhost:4502" ]; then
+              echo "AEM_AUTHOR_URL is the default localhost — no live AEM instance configured."
+              echo "Set AEM_AUTHOR_URL as a CircleCI project environment variable to enable E2E tests."
+              circleci-agent step halt
+            fi
+      - run:
           name: Print versions
           command: |
             java -version
@@ -292,11 +301,14 @@ workflows:
           requires:
             - build-java-11
 
-  # Runs only when triggered with run_ui_tests=true (requires a live AEM author).
-  # Trigger via: CircleCI UI → "Trigger Pipeline" → add parameter run_ui_tests=true,
-  # or via the CircleCI API with {"parameters": {"run_ui_tests": true}}.
+  # Runs on every push/PR unless skip_ui_tests=true is set.
+  # When AEM_AUTHOR_URL is not configured (still localhost), the job exits
+  # cleanly rather than timing out — no false failures on contributor PRs.
+  # To skip for debugging: CircleCI UI → "Trigger Pipeline" → skip_ui_tests=true
+  # or via API: {"parameters": {"skip_ui_tests": true}}
   ui-tests:
-    when: << pipeline.parameters.run_ui_tests >>
+    when:
+      not: << pipeline.parameters.skip_ui_tests >>
     jobs:
       - cypress-chrome
 

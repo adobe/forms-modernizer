@@ -66,7 +66,7 @@ variables**:
 | `build-java-11` | 11  | `aemaacs`     |                                        |
 | `build-aem65`   | 11  | `aem65`       | Build-validation only; no JDK 8 support |
 | `coverage`      | 11  | `aemaacs`     |                                        |
-| `cypress-chrome`| 11  | _(none)_      | Requires live AEM instance             |
+| `cypress-chrome`| 11  | _(none)_      | Runs by default; skips cleanly if no AEM configured |
 | `release`       | 11  | `aemaacs`     |                                        |
 
 > **JDK 8 / AEM 6.5 release support**: The `aem65` profile validates that the
@@ -80,10 +80,12 @@ minimum to Java 11 for that profile only.
 
 ## Cypress tests
 
-The `cypress-chrome` job runs the E2E suite from `ui.tests/test-module` via
-Maven (`mvn verify -Pcypress-ci`). It requires a **live AEM author instance**.
+The `cypress-chrome` job runs on every push/PR by default. It requires a
+**live AEM author instance** — when `AEM_AUTHOR_URL` is not configured (still
+pointing to localhost), the job detects this and exits cleanly so contributor
+PRs are not blocked by E2E timeouts.
 
-Set these CircleCI **project environment variables** before enabling the job:
+Set these CircleCI **project environment variables** to point at a real instance:
 
 | Env var                | Default                  | Purpose                    |
 | ---------------------- | ------------------------ | -------------------------- |
