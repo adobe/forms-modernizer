@@ -1,200 +1,241 @@
-# AEM Forms Modernization Tool 
+# AEM Forms Modernization Tool
 
-This tool helps AEM development teams convert legacy AEM Forms to the latest version. 
-It extends the [AEM Modernize Tools suite](https://github.com/adobe/aem-modernize-tools) and is designed specifically for AEM Forms developers to upgrade their forms to core components based AEM Forms. 
+This tool helps AEM development teams convert legacy AEM Forms (AF1 — foundation components) to AEM Forms with Core Components (AF2). It extends the [AEM Modernize Tools suite](https://github.com/adobe/aem-modernize-tools) and is designed specifically for AEM Forms developers upgrading their forms.
 
-Features include: 
-* Forms Conversion Tool (Legacy -> Modern/Core) 
+## Goal
 
-## Goal 
-
-The goal of this project is to provide a framework for converting legacy AEM Forms to the current capabilities. 
-The tool is designed to help AEM Forms developers upgrade their foundation based AEM Forms to core components based AEM Forms. 
-It is flexible and customizable to fit the needs of different projects. Users should be able to run conversions with minimal necessary rewrite rules for their forms.
+Provide a flexible, customizable framework for migrating AF1 forms to AF2 with minimal manual effort. Users can run conversions with only the rewrite rules relevant to their project.
 
 ## Modules
 
-The main parts of the template are:
+| Module | Purpose |
+| --- | --- |
+| `core` | OSGi services, component rewrite rules, listeners |
+| `ui.apps` | JCR rule definitions (`/apps/forms-modernizer/rules`, `/apps/forms-modernizer/proxy-rules`) |
+| `ui.config` | Author-mode OSGi configuration (rule search path, CORS) |
+| `ui.tests` | Cypress E2E tests |
+| `all` | Aggregated content package for deployment |
 
-* core: Java bundle containing all core functionality like OSGi services, listeners or schedulers, as well as component-related Java code such as servlets or request filters.
-* ui.apps: contains the /apps (and /etc) parts of the project, ie JS&CSS clientlibs, components, and templates
-* ui.config: contains runmode specific OSGi configs for the project
-* ui.tests: Selenium based UI tests
-* all: a single content package that embeds all the compiled modules (bundles and content packages) including any vendor dependencies
+---
 
-## How to build
+## Prerequisites
 
-To build all the modules, run the following command with Maven 3 and Java 11+ in the project root directory, specifying the project appId and template paths:
+Before building or running this tool, ensure the following are in place:
 
-    mvn clean install -DappId=${appId} -DformTemplatePath=${formTemplatePath} -DfragmentTemplatePath=${fragmentTemplatePath}
+### 1. AEM Instance with Core Components
 
-To build for AEM 6.5, use the `aem65` profile:
+Your AEM instance must have an AEM project with **Core Components** installed. If you do not already have a project set up, generate one using the AEM Project Archetype:
 
-    mvn clean install -Paem65 -DappId=${appId} -DformTemplatePath=${formTemplatePath} -DfragmentTemplatePath=${fragmentTemplatePath}
+```bash
+mvn -B org.apache.maven.plugins:maven-archetype-plugin:3.3.1:generate \
+  -D archetypeGroupId=com.adobe.aem \
+  -D archetypeArtifactId=aem-project-archetype \
+  -D archetypeVersion=56 \
+  -D appTitle="Dev Forms" \
+  -D appId="devform" \
+  -D groupId="com.devform" \
+  -D includeFormsenrollment=y \
+  -D aemVersion="cloud"
+```
 
-To build all the modules and deploy the `all` package to a local instance of AEM, run in the project root directory the following command:
+> Use the **latest available `archetypeVersion`**. To find it, check [aem-project-archetype releases](https://github.com/adobe/aem-project-archetype/releases). The `includeFormsenrollment=y` flag is required — it generates the Forms-specific template and component scaffolding.
 
-    mvn clean install -PautoInstallSinglePackage
+Build and deploy the generated project to your AEM author instance before installing forms-modernizer.
 
-Or alternatively
+### 2. Form Template and Fragment Template
 
-    mvn clean install -PautoInstallSinglePackage -Daem.port=4503
+The tool requires two editable templates on your AEM instance:
+- A **form template** (used as the base for converted AF2 forms)
+- A **fragment template** (used as the base for converted AF2 form fragments)
 
-Or to deploy only the bundle to the author, run
+**If you ran the archetype with `includeFormsenrollment=y`**, these templates are already created for you.
 
-    mvn clean install -PautoInstallBundle
+Their JCR paths follow the pattern:
+```
+/conf/<appId>/settings/wcm/templates/<template-name>
+```
 
-Or to deploy only a single content package, run in the sub-module directory (i.e `ui.apps`)
+Example paths for an `appId` of `mysite`:
+```
+/conf/mysite/settings/wcm/templates/blank-af-v2
+/conf/mysite/settings/wcm/templates/blank-af-fragment-template
+```
 
-    mvn clean install -PautoInstallPackage
-
-## Pre-requisites
-1. Your instance should have core components installed via archetype.
-2. The tool requires the user to create a core component form template and fragment template, and provide their paths using the build parameter. Failure to do so will result in build errors.
-3. Tool is currently compatible with AEM as a cloud service. You first need to migrate your AEM Forms to AEM as a cloud service. For more information, see [Migrate to AEM Forms as a Cloud Service](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/forms/setup-configure-migrate/migrate-to-forms-as-a-cloud-service#prerequisites)
+**If templates do not exist**, create them via `Tools > General > Templates > Create`. You need one of type *Adaptive Form (Core Components)* and one of type *Adaptive Form Fragment (Core Components)*.
 
 
-## How to run the tool
+---
 
-1. Build the project and deploy the `all` package to a local instance of AEM as described above.
-2. Goto Tools-> AEM Modernize Tools -> Forms Conversion.
-3. Click `Create`. Provide a Job name. Choose a form handling type from the provided types.
-   - *None* - Select this for an inplace forms conversion.
-   - *Restore* - Select this to restore to previous version and re-apply rules(modified or new).
-   - *Copy to Target* - Select this to convert the form by copying the form to a target location.
-     - *Source Path* - Provide the source folder path containing the form.
-     - *Target Path* - Provide the target folder path where the form will be copied and converted.
-4. Choose foundation based AF form(s) you want to convert and click on `Schedule Job`, followed by `Convert` button.
-5. The tool will navigate you to a page that displays the conversion status. To see the most recent status of the selected form(s), you need to refresh this page.
-6. Access the target folder to view the converted form.
-7. Before accessing the core component converted form, first open its properties, save them, and then close. This process will add any necessary additional properties to the form.
+## How to Build
 
-### Points to note
+The build requires three Maven properties. These map to the OSGi rule configuration that tells the tool which templates to use when creating AF2 forms:
 
-1. The conversion time for more intricate forms may be longer due to the number of components and their nested structure. 
-2. The conversion process for the form(s) is carried out in the background by the tool. Although the creation of the form might be visible, it's recommended not to access it until the status indicates that the conversion has either completed or failed.
-3. The tool expects the user to create a core component form and fragment template, providing the path via the build parameter. If not specified, the tool will throw an error.
-4. If your forms contain fragments, you must convert them first before converting the forms. The tool does not automatically convert the fragments mentioned in the form. After converting the form, you need to open it and update the fragment path to the newly converted fragment path.
-5. Currently, the tool maps the following OOTB components to these core components, as they are not available in core components:
-    - `af1:Numeric Stepper` -> `af2:Number Input`
-    - `af1:Date Input` -> `af2:Date Picker`
-    - `af1:Password Box` -> `af2:Text Input`
-    - `af1:Table` -> `af2:Panel`
+| Property | Description                                             |
+| --- |---------------------------------------------------------|
+| `appId` | Your project's app ID (matches the archetype `appId`).  |
+| `formTemplatePath` | Full JCR path of of your AF2 form template.             |
+| `fragmentTemplatePath` | Full JCR path of your AF2 fragment template.            |
 
-6. The following OOTB components are not yet supported in core components, so the tool will delete them in the newly created forms. The same applies to custom components if no rules are defined for them:
-    - `Adobe Sign Block`
-    - `Chart`
-    - `File Attachment Listing`
-    - `Footnote Placeholder`
-    - `Image Choice`
-    - `Next Button`
-    - `Previous Button`
-    - `Scribble Signature`
-    - `Summary Step`
-    - `Toolbar`
+**Build for AEMaaCS (Java 11):**
+```bash
+mvn clean install \
+  -DappId=mysite \
+  -DformTemplatePath=/conf/mysite/settings/wcm/templates/blank-af-template \
+  -DfragmentTemplatePath=/conf/mysite/settings/wcm/templates/blank-af-fragment-template
+```
 
-7. Deleted components are logged with relevant information. The tool will only delete nodes for which rules are not defined.
-8. Tool only converts structure of the form and its components. It does not convert scripts, custom functions, or form themes. These need to be rewritten by the user.
+**Build for AEM 6.5 (Java 11, validation only):**
+```bash
+mvn clean install -Paem65 \
+  -DappId=mysite \
+  -DformTemplatePath=/conf/mysite/settings/wcm/templates/blank-af-template \
+  -DfragmentTemplatePath=/conf/mysite/settings/wcm/templates/blank-af-fragment-template
+```
 
-### How it works under the hood
+**Deploy to local AEM author (port 4502):**
+```bash
+mvn clean install -PautoInstallSinglePackage \
+  -DappId=mysite \
+  -DformTemplatePath=/conf/mysite/settings/wcm/templates/blank-af-template \
+  -DfragmentTemplatePath=/conf/mysite/settings/wcm/templates/blank-af-fragment-template
+```
 
-Based on the provided configurations for both node-based and service-based rules, the tool determines which components are needed to be converted.
-When a user selects a page, the tool identifies all applicable rules and components that will undergo conversion.
-When user confirms to execute conversion, the tool using Service Based rules (Container Rewriter Rule) for specific components,
-implements the necessary structural modifications required to transition the component.
-Next, all the node-based rules (Component Rewrite Rule Service) are executed for every component present in the form.
+---
 
-For the node-based conversion rules, there are two files:
-- `proxy-rules` - This file holds the rules for the proxy components.
-- `rules` - This file holds the rules for the default components.
-During the project build process, the `ui.apps` module will utilize either of these files, depending on the parameter specified in the build command.
+## How to Run the Tool
 
-### Pending tasks
+1. Build and deploy the `all` package as described above.
+2. Go to **Tools → AEM Modernize Tools → Forms Conversion**.
+3. Click **Create**. Provide a job name. Choose a form handling type:
+   - **None** — In-place conversion.
+   - **Restore** — Restore the previous version and re-apply rules (useful after rule updates).
+   - **Copy to Target** — Copy the form to a target location, then convert the copy. Provide:
+     - *Source Path* — Folder containing the AF1 form(s).
+     - *Target Path* — Destination folder for the converted AF2 form(s).
+4. Select the AF1 form(s) you want to convert, click **Schedule Job**, then **Convert**.
+5. The conversion status page opens. Refresh to see the latest status.
+6. Once conversion shows **Complete**, open the converted form's properties, save, and close. This adds any properties the form editor requires on first open.
 
-The current state of the tool is a work in progress. The following tasks are pending:
+---
 
-1. Some components are in progress and are not yet supported by the tool.
-2. Visual rules will be supported by the tool, but this is currently in progress.
-3. It is anticipated that the user will rewrite scripts in the code editor and custom functions. Alternatively, these can be migrated using the content transfer tool, as mentioned in point 4 of this [guide](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/forms/setup-configure-migrate/migrate-to-forms-as-a-cloud-service#prerequisites).
-4. Form theme is needed to be rewritten by the user using BEM notation.
+## Converting Forms with Fragments (Nested Forms)
+
+> Fragments must be converted **before** the forms that reference them. The tool does not automatically follow `fragmentRef` links.
+
+Follow this order:
+
+### Step 1 — Convert all fragments first
+
+Run the tool against your fragment forms only (forms stored under the fragments path). Wait for all fragment conversions to show **Complete** before proceeding.
+
+### Step 2 — Convert the parent forms
+
+Run the tool against your parent forms. Fragment placeholder panels in the converted form will reference the **old AF1 fragment path** — this is expected and corrected in the next step.
+
+### Step 3 — Update fragment references
+
+After conversion, open each converted form in the AF2 editor. For each Fragment component, open its properties and update the **Fragment Reference** (`fragmentRef`) to point to the converted AF2 fragment path.
+
+The converted fragment path follows the same structure as the original, under your target root:
+```
+Original AF1 fragment:  /content/forms/af/mysite/my-fragment
+Converted AF2 fragment: /content/forms/af/mysite-converted/my-fragment   (if using Copy to Target)
+```
+
+---
+
+## Component Mappings
+
+### Components converted to a core components equivalent
+
+| AF1 Component | AF2 Component |
+| --- | --- |
+| Numeric Stepper | Number Input |
+| Date Input | Date Picker |
+| Password Box | Text Input |
+| Table | Panel (with responsive grid) |
+
+### Components removed during conversion (not available in core components)
+
+The following components are deleted from the converted form. Custom components with no rules defined are also deleted.
+
+- Adobe Sign Block
+- Chart
+- File Attachment Listing
+- Footnote Placeholder
+- Image Choice
+- Next Button / Previous Button
+- Scribble Signature
+- Summary Step
+- Toolbar
+
+Deleted components are logged with their path so you can track what was removed.
+
+### What is NOT converted
+
+- **Scripts and custom functions** — must be rewritten manually in the code editor. Alternatively, use the [Content Transfer Tool](https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/forms/setup-configure-migrate/migrate-to-forms-as-a-cloud-service#prerequisites).
+- **Form themes** — must be rewritten using BEM notation.
+- **Visual rules** — support is in progress.
+
+---
+
+## How It Works
+
+The tool applies two layers of rules in sequence:
+
+1. **Service-based rules** (`ComponentRewriteRule` OSGi services) — handle container-level structural rewrites: `guideContainer`, `guideContainerWrapper`, `guideFragmentContainer`, root panel, panels, and common components.
+
+2. **Node-based rules** (`/apps/forms-modernizer/rules` or `/apps/forms-modernizer/proxy-rules`) — declarative JCR XML rules applied to every matching component node.
+
+When `appId` is provided at build time, the `proxy-rules` are copied into the `rules` folder with `appId`, `formTemplatePath`, and `fragmentTemplatePath` substituted in. If `appId` is absent, the default `rules` folder (targeting `forms-components-examples`) is used.
+
+The `ComponentRewriteRuleService` OSGi configuration (`com.adobe.aem.modernize.component.impl.ComponentRewriteRuleServiceImpl`) points to `/apps/forms-modernizer/rules` as the search path.
+
+---
+
+## Points to Note
+
+1. **Large forms**: conversion time scales with the number of components and nesting depth. A form with hundreds of fields and fragments may take several minutes.
+2. **Do not open a form while its conversion job is running.** The form page is created early; wait until status shows Complete or Failed.
+3. **Fragment order matters.** See [Converting Forms with Fragments](#converting-forms-with-fragments-nested-forms).
+4. **Templates must exist** before building. The build will fail if `formTemplatePath` or `fragmentTemplatePath` do not exist on the target instance or if the properties are not provided.
+
+---
 
 ## Testing
 
-There are three levels of testing contained in the project:
-
 ### Unit tests
+```bash
+mvn clean test
+```
 
-This show-cases classic unit testing of the code contained in the bundle. To
-test, execute:
+### UI tests (Cypress, requires local AEM)
+```bash
+mvn clean verify -Pui-tests-local-execution
+```
 
-    mvn clean test
+---
 
-### Integration tests
+## Pending Tasks
 
-This allows running integration tests that exercise the capabilities of AEM via
-HTTP calls to its API. To run the integration tests, run:
+1. Some components are still in progress and not yet supported.
+2. Visual rules support is in progress.
+3. Form theme migration requires manual BEM rewrite.
 
-    mvn clean verify -Plocal
+---
 
-Test classes must be saved in the `src/main/java` directory (or any of its
-subdirectories), and must be contained in files matching the pattern `*IT.java`.
+## Maven Settings
 
-The configuration provides sensible defaults for a typical local installation of
-AEM. If you want to point the integration tests to different AEM author and
-publish instances, you can use the following system properties via Maven's `-D`
-flag.
-
-| Property | Description | Default value |
-| --- | --- | --- |
-| `it.author.url` | URL of the author instance | `http://localhost:4502` |
-| `it.author.user` | Admin user for the author instance | `admin` |
-| `it.author.password` | Password of the admin user for the author instance | `admin` |
-| `it.publish.url` | URL of the publish instance | `http://localhost:4503` |
-| `it.publish.user` | Admin user for the publish instance | `admin` |
-| `it.publish.password` | Password of the admin user for the publish instance | `admin` |
-
-The integration tests in this archetype use the [AEM Testing
-Clients](https://github.com/adobe/aem-testing-clients) and showcase some
-recommended [best
-practices](https://github.com/adobe/aem-testing-clients/wiki/Best-practices) to
-be put in use when writing integration tests for AEM.
-
-## Static Analysis
-
-The `analyse` module performs static analysis on the project for deploying into AEMaaCS. It is automatically
-run when executing
-
-    mvn clean install
-
-from the project root directory. Additional information about this analysis and how to further configure it
-can be found here https://github.com/adobe/aemanalyser-maven-plugin
-
-### UI tests
-
-They will test the UI layer of your AEM application using Selenium technology. 
-
-To run them locally:
-
-    mvn clean verify -Pui-tests-local-execution
-
-This default command requires:
-* an AEM author instance available at http://localhost:4502 (with the whole project built and deployed on it, see `How to build` section above)
-* Chrome browser installed at default location
-
-Check README file in `ui.tests` module for more details.
-
-## Maven settings
-
-The project comes with the auto-public repository configured. To setup the repository in your Maven settings, refer to:
+The project uses the Adobe public Maven repository. Configure it in your Maven settings:
 
     http://helpx.adobe.com/experience-manager/kb/SetUpTheAdobeMavenRepository.html
 
+---
+
 ## Contributing
 
-Contributions are welcomed! Read the [Contributing Guide](.github/CONTRIBUTING.md) for more information.
+See [Contributing Guide](.github/CONTRIBUTING.md).
 
-## Licensing
+## License
 
-This project is licensed under the Apache V2 License. See [LICENSE](LICENSE) for more information.
-
----
+Apache V2 — see [LICENSE](LICENSE).
