@@ -123,7 +123,6 @@ public class AdaptiveFormCommonGuideComponentsRewriterRule extends AbstractAdapt
                 node.setProperty(ENUM, enums);
                 node.setProperty(ENUM_NAMES, enumNames);
                 node.getProperty(OPTIONS).remove();
-                node.getSession().save();
             }
 
             if (node.hasProperty(ALIGNMENT)) {
@@ -134,7 +133,6 @@ public class AdaptiveFormCommonGuideComponentsRewriterRule extends AbstractAdapt
                     alignment = node.getSession().getValueFactory().createValue(NEW_VERTICAL_ALIGNMENT);
                 }
                 node.setProperty(ALIGNMENT, alignment);
-                node.getSession().save();
             }
         }
 
@@ -144,7 +142,6 @@ public class AdaptiveFormCommonGuideComponentsRewriterRule extends AbstractAdapt
                 String[] defaultValues = options.getString().split(",");
                 node.setProperty(DEFAULT, defaultValues);
                 node.getProperty(_VALUE).remove();
-                node.getSession().save();
             }
         }
 
@@ -168,7 +165,6 @@ public class AdaptiveFormCommonGuideComponentsRewriterRule extends AbstractAdapt
                 && Boolean.TRUE.toString().equals(node.getProperty(IS_DISPLAY_SAME_AS_VALIDATE).getValue().getString())) {
             node.setProperty(VALIDATE_PICTURE_CLAUSE, node.getProperty(DISPLAY_PICTURE_CLAUSE).getValue());
             node.setProperty(VALIDATION_PATTERN_TYPE, CUSTOM);
-            node.getSession().save();
         }
 
         //handling for button rules and events node
@@ -197,8 +193,6 @@ public class AdaptiveFormCommonGuideComponentsRewriterRule extends AbstractAdapt
 
             Node newEventsNode = AdaptiveFormUtils.createNodeAndCopyProperties(eventsNode, node, eventsNode.getName());
             convertMultiValuePropertyToStringArray(eventsNode.getProperty("click"), newEventsNode);
-
-            session.save();
         }
     }
 
@@ -221,7 +215,6 @@ public class AdaptiveFormCommonGuideComponentsRewriterRule extends AbstractAdapt
             DateValue dateValue = new DateValue(calendarDate);
             node.setProperty(newProperty, dateValue);
             node.getProperty(originalProperty).remove();
-            node.getSession().save();
         }
     }
 
@@ -230,8 +223,6 @@ public class AdaptiveFormCommonGuideComponentsRewriterRule extends AbstractAdapt
             Value value = sourceNode.getProperty(originalProperty).getValue();
             destinationNode.setProperty(newProperty, value);
             sourceNode.getProperty(originalProperty).remove();
-            sourceNode.getSession().save();
-            destinationNode.getSession().save();
         }
     }
 }
