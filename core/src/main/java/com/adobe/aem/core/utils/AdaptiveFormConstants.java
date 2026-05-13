@@ -149,6 +149,6 @@ public class AdaptiveFormConstants {
     public static final String CORE_SUBMIT_ACTION_RESOURCE_TYPE = COMPONENT_PATH_PREFIX + "actions/submit";
     public static final String CORE_RESET_ACTION_RESOURCE_TYPE = COMPONENT_PATH_PREFIX + "actions/reset";
     public final static List<String> GRID_LAYOUTS = Arrays.asList("fd/af/layouts/gridFluidLayout", "fd/af/layouts/gridFluidLayout2", "fd/af/layouts/defaultGuideLayout");
-    public final static List<String> PANEL_NODES_TO_IGNORE = Arrays.asList("layout", "items");
+    public final static List<String> PANEL_NODES_TO_IGNORE = Arrays.asList("layout", "items", "toolbar");
     public final static List<String> CONTAINER_NODES_TO_IGNORE = Arrays.asList("parsys1", "parsys2", "layout", "rootPanel");
 }

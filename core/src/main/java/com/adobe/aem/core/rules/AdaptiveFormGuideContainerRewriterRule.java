@@ -70,8 +70,8 @@ public class AdaptiveFormGuideContainerRewriterRule extends AbstractAdaptiveForm
             container.setProperty(FD_VERSION, CORE_COMPONENT_VERSION);
             container.setProperty(FIELD_TYPE, FIELD_TYPE_FORM);
             container.setProperty(THEME_REF, CANVAS_THEME_PATH);
-            container.getProperty(GUIDE_NODE_CLASS).remove();
-            container.getProperty(GUIDE_CSS).remove();
+            if (container.hasProperty(GUIDE_NODE_CLASS)) container.getProperty(GUIDE_NODE_CLASS).remove();
+            if (container.hasProperty(GUIDE_CSS)) container.getProperty(GUIDE_CSS).remove();
             if (GUIDE_CONTAINER_RESOURCE_TYPE.equals(guideResourceType) || GUIDE_CONTAINER_WRAPPER_RESOURCE_TYPE.equals(guideResourceType)) {
                 container.setProperty(SLING_RESOURCE_TYPE_PROPERTY, CORE_FORM_CONTAINER_RESOURCE_TYPE);
             } else if(GUIDE_FRAGMENT_CONTAINER_RESOURCE_TYPE.equals(guideResourceType)){
