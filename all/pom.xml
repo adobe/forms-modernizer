@@ -139,7 +139,9 @@
         <profile>
             <id>aemaacs</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <file>
+                    <exists>pom.xml</exists>
+                </file>
             </activation>
             <build>
                 <plugins>
@@ -289,6 +291,11 @@
                     <classifier>aem65</classifier>
                     <type>zip</type>
                 </dependency>
+                <dependency>
+                    <groupId>com.adobe.aem</groupId>
+                    <artifactId>forms-modernizer.core</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
             </dependencies>
         </profile>
     </profiles>
@@ -297,6 +304,11 @@
     <!-- D E P E N D E N C I E S                                                -->
     <!-- ====================================================================== -->
     <dependencies>
+        <dependency>
+            <groupId>com.adobe.aem</groupId>
+            <artifactId>forms-modernizer.core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.adobe.aem</groupId>
             <artifactId>forms-modernizer.ui.apps</artifactId>
