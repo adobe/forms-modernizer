@@ -1,0 +1,338 @@
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Copyright 2026 Adobe
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# CircleCI pipeline for adobe/forms-modernizer.
+#
+# Two Maven builds run on every push/PR:
+#   1. build-java-11  – default aemaacs profile, JDK 11
+#   2. build-aem65    – aem65 (on-prem) profile, JDK 8
+#
+# Both builds accept three project parameters (set as CircleCI env vars;
+# sensible defaults are provided so the build works out-of-the-box):
+#   - APP_ID                     (default: forms-modernizer)
+#   - FORM_TEMPLATE_PATH         (default: placeholder path)
+#   - FRAGMENT_TEMPLATE_PATH     (default: placeholder path)
+#
+# Optional Cypress UI test job (cypress-chrome):
+#   - Requires a live AEM author instance.
+#   - Set AEM_AUTHOR_URL (+ optional AEM_AUTHOR_USERNAME / AEM_AUTHOR_PASSWORD)
+#     as CircleCI project environment variables to target a real instance.
+#   - Defaults to http://localhost:4502 / admin / admin when not set.
+#
+# Required only for the `release` job (Maven Central deploy on tag):
+#   - SONATYPE_USERNAME, SONATYPE_PASSWORD
+#   - GPG_PASSPHRASE, GPG_PRIVATE_KEY (base64-encoded)
+#   - GITHUB_TOKEN                (for creating the GitHub release)
+# ----------------------------------------------------------------------------
+
+version: 2.1
+
+# cypress-chrome runs on every push/PR by default.
+# Set skip_ui_tests=true to bypass it (e.g. debugging a PR unrelated to E2E).
+# When no live AEM instance is configured (AEM_AUTHOR_URL still points to
+# localhost), the job detects this and exits cleanly rather than timing out.
+parameters:
+  skip_ui_tests:
+    type: boolean
+    default: false
+
+orbs:
+  codecov: codecov/codecov@4
+  browser-tools: circleci/browser-tools@1.4.6
+
+# ----------------------------------------------------------------------------
+# Reusable anchors
+# ----------------------------------------------------------------------------
+common:
+  restore_maven_cache: &restore_maven_cache
+    restore_cache:
+      keys:
+        - maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}-{{ checksum "parent/pom.xml" }}-{{ checksum "core/pom.xml" }}-{{ checksum "ui.tests/pom.xml" }}
+        - maven-repo-v1-{{ .Branch }}-
+        - maven-repo-v1-
+
+  save_maven_cache: &save_maven_cache
+    save_cache:
+      paths:
+        - ~/.m2
+      key: maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}-{{ checksum "parent/pom.xml" }}-{{ checksum "core/pom.xml" }}-{{ checksum "ui.tests/pom.xml" }}
+
+  maven_build_steps: &maven_build_steps
+    - checkout
+    - *restore_maven_cache
+    - run:
+        name: Print versions
+        command: |
+          java -version
+          mvn -version
+    - run:
+        name: Build & unit tests
+        command: |
+          : "${APP_ID:=forms-modernizer}"
+          : "${FORM_TEMPLATE_PATH:=/conf/forms-modernizer/settings/wcm/templates/blank-form-template/structure}"
+          : "${FRAGMENT_TEMPLATE_PATH:=/conf/forms-modernizer/settings/wcm/templates/blank-fragment-template/structure}"
+          mvn -B -ntp \
+            -s .circleci/settings.xml \
+            -P${BUILD_PROFILE} \
+            -DappId="${APP_ID}" \
+            -DformTemplatePath="${FORM_TEMPLATE_PATH}" \
+            -DfragmentTemplatePath="${FRAGMENT_TEMPLATE_PATH}" \
+            clean install
+    - *save_maven_cache
+    - run:
+        name: Collect surefire reports
+        when: always
+        command: |
+          mkdir -p ~/test-results/junit
+          find . -type f -path '*/target/surefire-reports/*.xml' \
+            -exec cp {} ~/test-results/junit/ \; || true
+    - store_test_results:
+        path: ~/test-results
+    - store_artifacts:
+        path: ~/test-results/junit
+        destination: surefire-reports
+
+# ----------------------------------------------------------------------------
+# Executors
+# ----------------------------------------------------------------------------
+executors:
+  jdk11:
+    docker:
+      - image: cimg/openjdk:11.0.22
+    resource_class: medium
+    working_directory: /home/circleci/build
+
+
+# ----------------------------------------------------------------------------
+# Jobs
+# ----------------------------------------------------------------------------
+jobs:
+  # AEMaaCS / default profile – Java 11
+  build-java-11:
+    executor: jdk11
+    environment:
+      MAVEN_OPTS: "-Xmx2g -XX:+UseG1GC"
+      BUILD_PROFILE: aemaacs
+    steps: *maven_build_steps
+
+  # AEM 6.5 on-prem profile – Java 11 (JDK 8 not supported; aem65 is a build-validation profile only)
+  build-aem65:
+    executor: jdk11
+    environment:
+      MAVEN_OPTS: "-Xmx2g -XX:+UseG1GC"
+      BUILD_PROFILE: aem65
+    steps: *maven_build_steps
+
+  coverage:
+    executor: jdk11
+    environment:
+      MAVEN_OPTS: "-Xmx2g -XX:+UseG1GC"
+    steps:
+      - checkout
+      - *restore_maven_cache
+      - run:
+          name: Build with coverage
+          command: |
+            : "${APP_ID:=forms-modernizer}"
+            : "${FORM_TEMPLATE_PATH:=/conf/forms-modernizer/settings/wcm/templates/blank-form-template/structure}"
+            : "${FRAGMENT_TEMPLATE_PATH:=/conf/forms-modernizer/settings/wcm/templates/blank-fragment-template/structure}"
+            mvn -B -ntp \
+              -s .circleci/settings.xml \
+              -Paemaacs \
+              -DappId="${APP_ID}" \
+              -DformTemplatePath="${FORM_TEMPLATE_PATH}" \
+              -DfragmentTemplatePath="${FRAGMENT_TEMPLATE_PATH}" \
+              -pl parent,core \
+              clean verify
+      - run:
+          name: Check for jacoco report
+          command: |
+            if [ ! -f core/target/site/jacoco/jacoco.xml ]; then
+              echo "core/target/site/jacoco/jacoco.xml not found."
+              echo "Add the jacoco-maven-plugin to core/pom.xml to enable codecov uploads."
+              echo "See .circleci/README.md for details."
+              circleci-agent step halt
+            fi
+      - codecov/upload:
+          file: core/target/site/jacoco/jacoco.xml
+          flags: unittests
+
+  cypress-chrome:
+    executor: jdk11
+    environment:
+      MAVEN_OPTS: "-Xmx2g -XX:+UseG1GC"
+    steps:
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - checkout
+      - *restore_maven_cache
+      - run:
+          name: Check AEM author reachability
+          command: |
+            : "${AEM_AUTHOR_URL:=http://localhost:4502}"
+            if [ "$AEM_AUTHOR_URL" = "http://localhost:4502" ]; then
+              echo "AEM_AUTHOR_URL is the default localhost — no live AEM instance configured."
+              echo "Set AEM_AUTHOR_URL as a CircleCI project environment variable to enable E2E tests."
+              circleci-agent step halt
+            fi
+      - run:
+          name: Print versions
+          command: |
+            java -version
+            mvn -version
+            google-chrome --version
+      - run:
+          name: Run Cypress tests
+          command: |
+            : "${AEM_AUTHOR_URL:=http://localhost:4502}"
+            : "${AEM_AUTHOR_USERNAME:=admin}"
+            : "${AEM_AUTHOR_PASSWORD:=admin}"
+            mvn -B -ntp \
+              -s .circleci/settings.xml \
+              -pl ui.tests \
+              -Pcypress-ci \
+              -DAEM_AUTHOR_URL="${AEM_AUTHOR_URL}" \
+              -DAEM_AUTHOR_USERNAME="${AEM_AUTHOR_USERNAME}" \
+              -DAEM_AUTHOR_PASSWORD="${AEM_AUTHOR_PASSWORD}" \
+              verify
+      - store_test_results:
+          path: ui.tests/test-module/target/cypress-results
+      - store_artifacts:
+          path: ui.tests/test-module/target/screenshots
+          destination: cypress-screenshots
+      - store_artifacts:
+          path: ui.tests/test-module/target/videos
+          destination: cypress-videos
+
+  release:
+    executor: jdk11
+    environment:
+      MAVEN_OPTS: "-Xmx2g -XX:+UseG1GC"
+    steps:
+      - checkout
+      - *restore_maven_cache
+      - run:
+          name: Import GPG key
+          command: |
+            if [ -z "$GPG_PRIVATE_KEY" ]; then
+              echo "GPG_PRIVATE_KEY is not set; aborting release."
+              exit 1
+            fi
+            echo "$GPG_PRIVATE_KEY" | base64 --decode | gpg --batch --import
+      - run:
+          name: Build & test release artifacts
+          command: |
+            : "${APP_ID:=forms-modernizer}"
+            : "${FORM_TEMPLATE_PATH:=/conf/forms-modernizer/settings/wcm/templates/blank-form-template/structure}"
+            : "${FRAGMENT_TEMPLATE_PATH:=/conf/forms-modernizer/settings/wcm/templates/blank-fragment-template/structure}"
+            mvn -B -ntp \
+              -s .circleci/settings.xml \
+              -Prelease,aemaacs \
+              -DappId="${APP_ID}" \
+              -DformTemplatePath="${FORM_TEMPLATE_PATH}" \
+              -DfragmentTemplatePath="${FRAGMENT_TEMPLATE_PATH}" \
+              clean package
+      - run:
+          name: Create GitHub release & upload artifacts
+          command: |
+            if [ -z "$GITHUB_TOKEN" ]; then
+              echo "GITHUB_TOKEN not set; skipping GitHub release."
+              exit 0
+            fi
+            TAG="${CIRCLE_TAG}"
+            RESPONSE=$(curl -sS -X POST \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "{\"tag_name\":\"$TAG\",\"name\":\"$TAG\",\"body\":\"Release $TAG\"}" \
+              "https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/releases")
+            UPLOAD_URL=$(echo "$RESPONSE" | jq -r '.upload_url' | sed -e 's/{.*}//')
+            if [ -z "$UPLOAD_URL" ] || [ "$UPLOAD_URL" = "null" ]; then
+              echo "Failed to create GitHub release. Response: $RESPONSE"
+              exit 1
+            fi
+            for ARTIFACT in ./all/target/*.zip; do
+              [ -e "$ARTIFACT" ] || continue
+              echo "Uploading $ARTIFACT..."
+              curl -sS -X POST \
+                -H "Authorization: token $GITHUB_TOKEN" \
+                -H "Content-Type: application/zip" \
+                --data-binary @"$ARTIFACT" \
+                "$UPLOAD_URL?name=$(basename "$ARTIFACT")"
+            done
+      - run:
+          name: Deploy to Maven Central
+          command: |
+            : "${APP_ID:=forms-modernizer}"
+            : "${FORM_TEMPLATE_PATH:=/conf/forms-modernizer/settings/wcm/templates/blank-form-template/structure}"
+            : "${FRAGMENT_TEMPLATE_PATH:=/conf/forms-modernizer/settings/wcm/templates/blank-fragment-template/structure}"
+            mvn -B -ntp \
+              -s .circleci/settings.xml \
+              -Prelease,aemaacs \
+              -DappId="${APP_ID}" \
+              -DformTemplatePath="${FORM_TEMPLATE_PATH}" \
+              -DfragmentTemplatePath="${FRAGMENT_TEMPLATE_PATH}" \
+              -DskipTests \
+              deploy
+      - run:
+          name: Cleanup credentials
+          when: always
+          command: |
+            rm -rf ~/.gnupg || true
+
+# ----------------------------------------------------------------------------
+# Workflows
+# ----------------------------------------------------------------------------
+workflows:
+  version: 2
+
+  # Runs on every branch push and pull request.
+  ci:
+    jobs:
+      - build-java-11
+      - build-aem65
+      - coverage:
+          requires:
+            - build-java-11
+
+  # Runs on every push/PR unless skip_ui_tests=true is set.
+  # When AEM_AUTHOR_URL is not configured (still localhost), the job exits
+  # cleanly rather than timing out — no false failures on contributor PRs.
+  # To skip for debugging: CircleCI UI → "Trigger Pipeline" → skip_ui_tests=true
+  # or via API: {"parameters": {"skip_ui_tests": true}}
+  ui-tests:
+    when:
+      not: << pipeline.parameters.skip_ui_tests >>
+    jobs:
+      - cypress-chrome
+
+  # Runs only when a release tag (forms-modernizer-X.Y.Z) is pushed from main.
+  release:
+    jobs:
+      - build-java-11:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^forms-modernizer-\d+\.\d+\.\d+$/
+      - build-aem65:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^forms-modernizer-\d+\.\d+\.\d+$/
+      - release:
+          requires:
+            - build-java-11
+            - build-aem65
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^forms-modernizer-\d+\.\d+\.\d+$/

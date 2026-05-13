@@ -1,0 +1,31 @@
+codecov:
+  require_ci_to_pass: true
+
+coverage:
+  status:
+    project:
+      default: off
+      unittests:
+        target: 60%
+        threshold: 10%
+        flags:
+          - unittests
+    patch:
+      default: off
+      unittests:
+        target: 60%
+        threshold: 10%
+        flags:
+          - unittests
+
+flags:
+  unittests:
+    paths:
+      - core/
+
+ignore:
+  - "**/target/**"
+  - "all/**"
+  - "ui.apps/**"
+  - "ui.config/**"
+  - "ui.tests/**"

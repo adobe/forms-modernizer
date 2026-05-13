@@ -1,0 +1,10 @@
+{
+  "bundles": {
+    "core": "com.adobe.aem.forms-modernizer.core"
+  },
+  "paths": {
+    "modernizerTool": "/libs/cq/modernize/ui/content/forms.html",
+    "rulesRoot": "/apps/forms-modernizer/rules",
+    "proxyRulesRoot": "/apps/forms-modernizer/proxy-rules"
+  }
+}
