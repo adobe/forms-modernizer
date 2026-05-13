@@ -100,10 +100,10 @@ public class AdaptiveFormGuideTableRewriterRule extends AbstractAdaptiveFormComp
                         if (bindRef != null) {
                             updateBindRefForNonRepeatableParent(tableRowContainer.getNode(rowNode.getName()), bindRef, null, null);
                         }
-                        rowNode.getProperty(SLING_RESOURCE_TYPE_PROPERTY).remove();
+                        if (rowNode.hasProperty(SLING_RESOURCE_TYPE_PROPERTY)) rowNode.getProperty(SLING_RESOURCE_TYPE_PROPERTY).remove();
                     }
                 }
-                tableRowComponent.getProperty(SLING_RESOURCE_TYPE_PROPERTY).remove();
+                if (tableRowComponent.hasProperty(SLING_RESOURCE_TYPE_PROPERTY)) tableRowComponent.getProperty(SLING_RESOURCE_TYPE_PROPERTY).remove();
                 copyTableNodeChildren(tableRowComponent, tableRowContainer);
             }
         }
@@ -115,7 +115,7 @@ public class AdaptiveFormGuideTableRewriterRule extends AbstractAdaptiveFormComp
 
     private Node getTableContainer(Node tableComponent, Node tableContainer) throws RepositoryException {
         tableContainer = createNodeAndCopyProperties(tableComponent, tableContainer, tableComponent.getName());
-        tableContainer.getProperty(GUIDE_NODE_CLASS).remove();
+        if (tableContainer.hasProperty(GUIDE_NODE_CLASS)) tableContainer.getProperty(GUIDE_NODE_CLASS).remove();
         tableContainer.setProperty(FIELD_TYPE, PANEL);
         tableContainer.setProperty(HIDE_TITLE, true);
         tableContainer.setProperty(LAYOUT_PROPERTY, RESPONSIVE_GRID);
@@ -161,7 +161,7 @@ public class AdaptiveFormGuideTableRewriterRule extends AbstractAdaptiveFormComp
             Node node = nodeIterator.nextNode();
             if(!PANEL_NODES_TO_IGNORE.contains(node.getName())) {
                 JcrUtil.copy(node, panelNode, node.getName());
-                node.getProperty(SLING_RESOURCE_TYPE_PROPERTY).remove();
+                if (node.hasProperty(SLING_RESOURCE_TYPE_PROPERTY)) node.getProperty(SLING_RESOURCE_TYPE_PROPERTY).remove();
             }
         }
     }

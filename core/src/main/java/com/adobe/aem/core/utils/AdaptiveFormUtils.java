@@ -50,7 +50,7 @@ public class AdaptiveFormUtils {
         if (checkIfNodeCanBeDeleted(node)) {
             Node parent = node.getParent();
             node.remove();
-            if (parent.getName().equals(GUIDE_CONTAINER) || parent.getName().equals(GUIDE_CONTAINER_WRAPPER)) {
+            if (parent.getName().equals(GUIDE_CONTAINER) || parent.getName().equals(GUIDE_CONTAINER_WRAPPER) || parent.getName().equals(GUIDE_FRAGMENT_CONTAINER)) {
                 String initialName = parent.getName();
                 Node guideContainerParent = parent.getParent();
                 parent.remove();
@@ -74,9 +74,11 @@ public class AdaptiveFormUtils {
                 newPanel.setProperty(FIELD_TYPE, PANEL);
                 newPanel.setProperty(HIDE_TITLE, true);
                 newPanel.setProperty(SLING_RESOURCE_TYPE_PROPERTY, LAYOUT_RESOURCE_TYPE_MAPPINGS.get(layoutType));
-                newPanel.getProperty(GUIDE_NODE_CLASS).remove();
+                if (newPanel.hasProperty(GUIDE_NODE_CLASS)) newPanel.getProperty(GUIDE_NODE_CLASS).remove();
             } else if (!isRootPanel) {
                 newPanel = createNodeAndCopyProperties(panelContainer, newContainer, panelContainer.getName());
+                newPanel.setProperty(SLING_RESOURCE_TYPE_PROPERTY, CORE_PANEL_RESOURCE_TYPE);
+                newPanel.setProperty(FIELD_TYPE, PANEL);
             }
             if (isRepeatablePanel(panelContainer)) {
                 newPanel.setProperty(REPEATABLE, true);
@@ -89,8 +91,8 @@ public class AdaptiveFormUtils {
     public static void populateResourceTypeForLayout(String coreWizardResourceType, String coreTabsOnTopResourceType,
                                                      String coreVerticalTabsResourceType, String coreAccordionResourceType) {
         LAYOUT_RESOURCE_TYPE_MAPPINGS.put(WIZARD_RESOURCE_TYPE, coreWizardResourceType);
-        LAYOUT_RESOURCE_TYPE_MAPPINGS.put(VERTICAL_TABS_RESOURCE_TYPE, coreTabsOnTopResourceType);
-        LAYOUT_RESOURCE_TYPE_MAPPINGS.put(TABS_ON_TOP_RESOURCE_TYPE, coreVerticalTabsResourceType);
+        LAYOUT_RESOURCE_TYPE_MAPPINGS.put(VERTICAL_TABS_RESOURCE_TYPE, coreVerticalTabsResourceType);
+        LAYOUT_RESOURCE_TYPE_MAPPINGS.put(TABS_ON_TOP_RESOURCE_TYPE, coreTabsOnTopResourceType);
         LAYOUT_RESOURCE_TYPE_MAPPINGS.put(ACCORDION_RESOURCE_TYPE, coreAccordionResourceType);
     }
 

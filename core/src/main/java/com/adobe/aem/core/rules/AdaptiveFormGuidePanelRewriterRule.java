@@ -137,7 +137,7 @@ public class AdaptiveFormGuidePanelRewriterRule extends AbstractAdaptiveFormComp
             panelContainer.setProperty(FIELD_TYPE, PANEL);
             panelContainer.setProperty(FRAGMENT_PATH, panelContainer.getProperty(FRAGMENT_REF).getString());
             panelContainer.getProperty(FRAGMENT_REF).remove();
-            panelContainer.getProperty(GUIDE_NODE_CLASS).remove();
+            if (panelContainer.hasProperty(GUIDE_NODE_CLASS)) panelContainer.getProperty(GUIDE_NODE_CLASS).remove();
         }
     }
 }
